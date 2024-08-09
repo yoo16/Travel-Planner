@@ -21,20 +21,20 @@ export async function CreateTravelPlan(travelPlan: TravelPlan) {
     model.generationConfig.maxOutputTokens = 2048;
 
     const planTemplate = PlanTemplate;
-    const prompt = `つぎの条件で旅行プランを作成\n
+    const prompt = `つぎの条件で旅行プランを作成、 マークダウンを除いたJSONフォーマットのみでレスポンスして\n
                     destination: ${travelPlan.destination}
                     departureDate: ${travelPlan.departureDate}
                     arrivalDate: ${travelPlan.arrivalDate}
                     budget: ${travelPlan.budget}
                     keyword: ${travelPlan.keyword}
                     \n
-                    結果はJSONのみでレスポンス\n
                     ${planTemplate}
                     `;
     try {
         const result = await model.generateContent(prompt);
-        console.log(result);
-        return result;
+        const json = result.response.text()
+        console.log(json);
+        return json;
     } catch (error) {
         return { message: null, error: 'Translate error.' };
     }

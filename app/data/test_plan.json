@@ -1,0 +1,97 @@
+{
+    "destination": "日光",
+    "departureDate": "2024-08-12",
+    "arrivalDate": "2024-08-14",
+    "plans": [
+        [
+            {
+                "date": "2024-08-12",
+                "transportation": "新幹線",
+                "place": "東京駅",
+                "activity": "日光線に乗り換え",
+                "memo": "東京駅から日光駅まで約2時間"
+            },
+            {
+                "date": "2024-08-12",
+                "transportation": "バス",
+                "place": "日光駅",
+                "activity": "東照宮へ移動",
+                "memo": "日光駅から東照宮まではバスで約15分"
+            },
+            {
+                "date": "2024-08-12",
+                "transportation": "",
+                "place": "東照宮",
+                "activity": "参拝",
+                "memo": "日光東照宮は、徳川家康を祀る神社。華麗な彫刻や装飾が見どころ。"
+            },
+            {
+                "date": "2024-08-12",
+                "transportation": "徒歩",
+                "place": "東照宮周辺",
+                "activity": "散策",
+                "memo": "東照宮周辺には、神橋や輪王寺など、見どころがたくさん。"
+            },
+            {
+                "date": "2024-08-12",
+                "transportation": "バス",
+                "place": "日光駅周辺",
+                "activity": "ホテルへチェックイン",
+                "memo": "日光駅周辺には、温泉旅館やホテルが多数。"
+            },
+            {
+                "date": "2024-08-12",
+                "transportation": "",
+                "place": "ホテル",
+                "activity": "夕食",
+                "memo": "日光名物の湯葉料理や蕎麦など、美味しいものを堪能。"
+            }
+        ],
+        [
+            {
+                "date": "2024-08-13",
+                "transportation": "バス",
+                "place": "ホテル",
+                "activity": "中禅寺湖へ移動",
+                "memo": "ホテルから中禅寺湖まではバスで約1時間"
+            },
+            {
+                "date": "2024-08-13",
+                "transportation": "",
+                "place": "中禅寺湖",
+                "activity": "遊覧船に乗船",
+                "memo": "中禅寺湖は、雄大な自然に囲まれた美しい湖。遊覧船で湖を一周。"
+            },
+            {
+                "date": "2024-08-13",
+                "transportation": "",
+                "place": "華厳の滝",
+                "activity": "見学",
+                "memo": "華厳の滝は、中禅寺湖から流れ落ちる高さ97メートルの滝。迫力満点。"
+            },
+            {
+                "date": "2024-08-13",
+                "transportation": "バス",
+                "place": "日光駅周辺",
+                "activity": "日光の街を散策",
+                "memo": "日光駅周辺には、お土産屋さんやカフェなどがある。"
+            },
+            {
+                "date": "2024-08-13",
+                "transportation": "",
+                "place": "レストラン",
+                "activity": "夕食",
+                "memo": "日光名物のもみじの天ぷらなど、美味しいものを堪能。"
+            }
+        ],
+        [
+            {
+                "date": "2024-08-14",
+                "transportation": "新幹線",
+                "place": "日光駅",
+                "activity": "東京駅へ",
+                "memo": "日光駅から東京駅まで約2時間"
+            }
+        ]
+    ]
+}

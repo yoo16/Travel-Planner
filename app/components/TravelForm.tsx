@@ -9,6 +9,7 @@ interface TravelFormProps {
 }
 
 const TravelForm: React.FC<TravelFormProps> = ({ onSubmit }) => {
+    const [departure, setDeparture] = useState('');
     const [destination, setDestination] = useState('');
     const [departureDate, setDepartureDate] = useState('');
     const [arrivalDate, setArrivalDate] = useState('');
@@ -19,6 +20,20 @@ const TravelForm: React.FC<TravelFormProps> = ({ onSubmit }) => {
 
     const getDestinations = () => {
         return region === 'domestic' ? domesticDestinations : overseasDestinations;
+    };
+
+    const handleDepartureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const input = e.target.value;
+        setDeparture(input);
+
+        if (input.length > 0) {
+            const filteredSuggestions = getDestinations().filter((d) =>
+                d.kanji.startsWith(input) || d.furigana.startsWith(input)
+            );
+            setSuggestions(filteredSuggestions);
+        } else {
+            setSuggestions([]);
+        }
     };
 
     const handleDestinationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,7 +50,12 @@ const TravelForm: React.FC<TravelFormProps> = ({ onSubmit }) => {
         }
     };
 
-    const handleSuggestionClick = (suggestion: { kanji: string, furigana: string }) => {
+    const handleDepartureSuggestion = (suggestion: Furigana) => {
+        setDeparture(suggestion.kanji);
+        setSuggestions([]);
+    };
+
+    const handleDestinationSuggestion = (suggestion: Furigana) => {
         setDestination(suggestion.kanji);
         setSuggestions([]);
     };
@@ -52,7 +72,7 @@ const TravelForm: React.FC<TravelFormProps> = ({ onSubmit }) => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        onSubmit({ destination, departureDate, arrivalDate });
+        onSubmit({ departure, destination, departureDate, arrivalDate, budget });
     };
 
     return (
@@ -83,11 +103,11 @@ const TravelForm: React.FC<TravelFormProps> = ({ onSubmit }) => {
                 </div>
             </div>
             <div className="flex flex-col">
-                <label className="mb-2 font-semibold text-lg">目的地:</label>
+                <label className="mb-2 font-semibold text-lg">出発地:</label>
                 <input
                     type="text"
-                    value={destination}
-                    onChange={handleDestinationChange}
+                    value={departure}
+                    onChange={handleDepartureChange}
                     className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 {suggestions.length > 0 && (
@@ -95,8 +115,30 @@ const TravelForm: React.FC<TravelFormProps> = ({ onSubmit }) => {
                         {suggestions.map((suggestion, index) => (
                             <li
                                 key={index}
-                                onClick={() => handleSuggestionClick(suggestion)}
+                                onClick={() => handleDepartureSuggestion(suggestion)}
                                 className="p-2 cursor-pointer hover:bg-blue-500 hover:text-white"
+                            >
+                                {suggestion.kanji} ({suggestion.furigana})
+                            </li>
+                        ))}
+                    </ul>
+                )}
+            </div>
+            <div className="flex flex-col">
+                <label className="mb-2 font-semibold text-lg">目的地:</label>
+                <input
+                    type="text"
+                    value={destination}
+                    onChange={handleDestinationChange}
+                    className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
+                />
+                {suggestions.length > 0 && (
+                    <ul className="border border-gray-300 rounded-md mt-2 bg-white shadow-lg max-h-40 overflow-y-auto">
+                        {suggestions.map((suggestion, index) => (
+                            <li
+                                key={index}
+                                onClick={() => handleDestinationSuggestion(suggestion)}
+                                className="p-2 cursor-pointer hover:bg-gray-500 hover:text-white"
                             >
                                 {suggestion.kanji} ({suggestion.furigana})
                             </li>

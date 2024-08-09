@@ -1,6 +1,4 @@
-// /app/data/destinations.ts
-
-export const domesticDestinations = [
+export const domesticDestinations: Furigana[] = [
     { kanji: '北海道', furigana: 'ほっかいどう' },
     { kanji: '青森', furigana: 'あおもり' },
     { kanji: '岩手', furigana: 'いわて' },
@@ -50,7 +48,7 @@ export const domesticDestinations = [
     { kanji: '沖縄', furigana: 'おきなわ' }
 ];
 
-export const overseasDestinations = [
+export const overseasDestinations: Furigana[] = [
     { kanji: 'パリ', furigana: 'ぱり' },
     { kanji: 'ニューヨーク', furigana: 'にゅーよーく' },
     { kanji: 'ロンドン', furigana: 'ろんどん' },
