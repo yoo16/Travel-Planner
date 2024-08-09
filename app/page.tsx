@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import TravelForm from './components/TravelForm';
-import TravelPlanComponent from '@/app/components/TravelPlanList';
+import TravelPlanList from '@/app/components/TravelPlanList';
 import { TravelPlan } from '@/app/interfaces/TravelPlan';
 import axios from 'axios';
 

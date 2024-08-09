@@ -1,11 +1,11 @@
 import React from 'react';
 import { TravelPlan } from '@/app/interfaces/TravelPlan';
 
-interface TravelPlanProps {
+interface TravelPlanListProps {
     plan: TravelPlan;
 }
 
-const TravelPlanList: React.FC<TravelPlanProps> = ({ plan }) => {
+const TravelPlanList: React.FC<TravelPlanListProps> = ({ plan }) => {
     return (
         <div className="bg-white shadow-md rounded-lg p-6 my-4">
             <h2 className="text-2xl font-bold mb-4">Travel Plan</h2>

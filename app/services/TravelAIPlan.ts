@@ -5,15 +5,21 @@ import { PlanTemplate } from "@/app/components/PlanTemplate";
 const API_KEY = process.env.GEMINI_API_KEY;
 const GEMINI_MODEL = 'gemini-1.5-flash';
 
-if (!API_KEY) {
-    throw new Error("API key is not set");
-}
+const generationConfig = {
+    temperature: 1,  //ランダム性
+    topP: 0.95,      //累積確率
+    topK: 64,        //トップkトークン
+    maxOutputTokens: 1024,  //最大出力トークン数
+    // responseMimeType: "application/json",
+};
 
-const genAI = new GoogleGenerativeAI(API_KEY);
-const model = genAI.getGenerativeModel({ model: GEMINI_MODEL });
-model.generationConfig.maxOutputTokens = 2048;
+export async function CreateTravelPlan(travelPlan: TravelPlan) {
+    if (!API_KEY) return;
 
-export async function TravelAIPlan(travelPlan: TravelPlan, toLang: string) {
+    const genAI = new GoogleGenerativeAI(API_KEY);
+    const model = genAI.getGenerativeModel({ model: GEMINI_MODEL });
+    model.generationConfig.maxOutputTokens = 2048;
+
     const planTemplate = PlanTemplate;
     const prompt = `つぎの条件で旅行プランを作成\n
                     destination: ${travelPlan.destination}
