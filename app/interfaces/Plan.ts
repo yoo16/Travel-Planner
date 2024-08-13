@@ -1,4 +1,4 @@
-export interface TravelPlan {
+export interface Plan {
     departure: string;
     destination: string;
     departureDate: string;

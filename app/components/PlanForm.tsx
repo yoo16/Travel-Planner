@@ -1,14 +1,14 @@
 'use client'
 
 import React, { useState } from 'react';
-import { TravelPlan } from '@/app/interfaces/TravelPlan';
+import { Plan } from '@/app/interfaces/Plan';
 import { domesticDestinations, overseasDestinations } from '@/app/data/destinations';
 
 interface TravelFormProps {
-    onSubmit: (plan: TravelPlan) => void;
+    onSubmit: (plan: Plan) => void;
 }
 
-const TravelForm: React.FC<TravelFormProps> = ({ onSubmit }) => {
+const PlanForm: React.FC<TravelFormProps> = ({ onSubmit }) => {
     const [departure, setDeparture] = useState('');
     const [destination, setDestination] = useState('');
     const [departureDate, setDepartureDate] = useState('');
@@ -192,4 +192,4 @@ const TravelForm: React.FC<TravelFormProps> = ({ onSubmit }) => {
     );
 };
 
-export default TravelForm;
+export default PlanForm;

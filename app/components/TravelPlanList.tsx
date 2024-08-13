@@ -6,32 +6,40 @@ interface TravelPlanListProps {
 
 const TravelPlanList: React.FC<TravelPlanListProps> = ({ plans }) => {
     return (
-        <div className="m-3">
+        <div className="m-5">
             {plans.map((dayPlans, dayIndex) => (
-                <div key={dayIndex} className="border-b pb-6">
+                <div key={dayIndex} className="border-b p-6">
                     <h2 className="text-2xl font-bold text-gray-600 mb-6">
-                        Day {dayIndex + 1}: {dayPlans[0].date}
+                        {dayPlans[0].date} - {dayIndex + 1}日目 -
                     </h2>
                     <div className="space-y-4">
                         {dayPlans.map((plan, index) => (
-                            <div key={index} className="bg-gray-100 p-4 rounded-lg shadow">
-                                <p className="text-gray-700 mb-1">
-                                    <span className="font-semibold text-gray-500">場所: </span>
-                                    {plan.place}
-                                </p>
-                                {plan.transportation && (
-                                    <p className="text-gray-700 mb-2">
-                                        <span className="font-semibold text-gray-500">移動: </span>
-                                        {plan.transportation}
-                                    </p>
-                                )}
-                                <p className="text-gray-700 mb-1">
-                                    <span className="font-semibold text-gray-500">行動: </span>
+                            <div key={index} className="bg-gray-100 p-3 rounded-lg shadow">
+                                <div className="text-gray-700 my-4">
+                                    <span className="text-xs font-semibold rounded p-2 mx-2  bg-blue-500 text-white">
+                                        行動
+                                    </span>
                                     {plan.activity}
-                                </p>
-                                <p className="text-gray-700">
+                                </div>
+
+                                <div className="text-gray-700 my-4">
+                                    <span className="text-xs font-semibold rounded p-2 mx-2  bg-blue-500 text-white">
+                                        場所
+                                    </span>
+                                    {plan.place}
+                                    {plan.transportation && (
+                                        <>
+                                            <span className="text-xs font-semibold rounded p-2 mx-2  bg-blue-500 text-white">
+                                                交通
+                                            </span>
+                                            {plan.transportation}
+                                        </>
+                                    )}
+                                </div>
+
+                                <div className="text-gray-700 mx-2">
                                     {plan.memo}
-                                </p>
+                                </div>
                             </div>
                         ))}
                     </div>

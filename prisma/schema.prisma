@@ -1,0 +1,37 @@
+// prisma/schema.prisma
+
+datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+}
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+model Plan {
+    id            Int        @id @default(autoincrement())
+    departure     String
+    destination   String
+    departureDate DateTime
+    arrivalDate   DateTime
+    budget        Float?
+    keyword       String?
+    items         PlanItem[]
+
+    @@map("plans")
+}
+
+model PlanItem {
+    id             Int      @id @default(autoincrement())
+    date           DateTime
+    transportation String
+    place          String
+    activity       String
+    memo           String
+    planId         Int
+
+    plan Plan @relation(fields: [planId], references: [id])
+
+    @@map("plan_items")
+}
