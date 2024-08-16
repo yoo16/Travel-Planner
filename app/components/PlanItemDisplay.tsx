@@ -13,7 +13,7 @@ const PlanItemDisplay: React.FC<PlanItemDisplayProps> = ({ planItem, onEdit }) =
                     onClick={onEdit}
                     className="py-1 px-4 bg-yellow-500 text-white rounded-md"
                 >
-                    編集
+                    Edit
                 </button>
             </div>
             <div className="text-gray-700">

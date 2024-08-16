@@ -6,10 +6,11 @@ import PlanItemDisplay from './PlanItemDisplay';
 
 interface PlanItemListProps {
     plan: Plan;
+    planItems: PlanItem[][];
     onUpdate: (updatedItem: PlanItem) => void;
 }
 
-const PlanItemList: React.FC<PlanItemListProps> = ({ plan, onUpdate }) => {
+const PlanItemList: React.FC<PlanItemListProps> = ({ plan, planItems, onUpdate }) => {
     const [editingItem, setEditingItem] = useState<PlanItem | null>(null);
 
     const handleEditClick = (item: PlanItem) => {
@@ -28,7 +29,7 @@ const PlanItemList: React.FC<PlanItemListProps> = ({ plan, onUpdate }) => {
     return (
         <>
             <div className="m-5">
-                {plan?.planItems && plan.planItems.map((dayPlans, dayIndex) => (
+                {planItems && planItems.map((dayPlans, dayIndex) => (
                     <div key={dayIndex} className="border-b p-6">
                         <h2 className="text-2xl font-bold text-gray-600 mb-6">
                             {new Date(dayPlans[0].date).toLocaleDateString()} - {dayIndex + 1}日目 -
