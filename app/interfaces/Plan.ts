@@ -1,4 +1,5 @@
-export interface Plan {
+interface Plan {
+    id: number;
     departure: string;
     destination: string;
     departureDate: string;

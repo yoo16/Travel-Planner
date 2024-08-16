@@ -1,8 +1,9 @@
 interface PlanItem {
     id?: number;
-    date: string;
+    date: Date;
     transportation: string;
     place: string;
     activity: string;
     memo: string;
+    planId: number;
 }

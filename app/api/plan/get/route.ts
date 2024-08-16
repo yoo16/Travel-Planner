@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 export async function GET(req: NextRequest) {
     try {
         const plans = await prisma.plan.findMany({
-            include: { items: true },
+            include: { planItems: true },
         });
         return NextResponse.json(plans, { status: 200 });
     } catch (error) {

@@ -16,7 +16,7 @@ const PlanForm: React.FC<TravelFormProps> = ({ onSubmit }) => {
     const [budget, setBudget] = useState(0);
     const [keyword, setKeyword] = useState("");
     const [suggestions, setSuggestions] = useState<{ kanji: string, furigana: string }[]>([]);
-    const [region, setRegion] = useState('domestic'); // 'domestic' か 'overseas'
+    const [region, setRegion] = useState('domestic');
 
     const getDestinations = () => {
         return region === 'domestic' ? domesticDestinations : overseasDestinations;
@@ -76,7 +76,7 @@ const PlanForm: React.FC<TravelFormProps> = ({ onSubmit }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="max-w-lg mx-auto p-6 bg-white shadow-md rounded-lg space-y-6">
+        <div className="max-w-lg mx-auto p-6 bg-white shadow-md rounded-lg space-y-6">
             <div className="flex flex-col">
                 <label className="mb-2 font-semibold text-lg">地域:</label>
                 <div className="flex space-x-4">
@@ -185,10 +185,10 @@ const PlanForm: React.FC<TravelFormProps> = ({ onSubmit }) => {
                     className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
             </div>
-            <button type="submit" className="w-full py-2 px-4 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+            <button onClick={handleSubmit} type="submit" className="w-full py-2 px-4 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                 AIプラン
             </button>
-        </form>
+        </div>
     );
 };
 
