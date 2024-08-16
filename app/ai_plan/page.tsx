@@ -1,14 +1,12 @@
 'use client'
 
 import React, { useState, useRef } from 'react';
-import PlanForm from '@/app/components/PlanForm';
-import TravelPlanList from '@/app/components/TravelPlanList';
-import { Plan } from '@/app/interfaces/Plan';
+import PlanForm from '@/app/components/AiPlanForm';
+import AiPlanList from '@/app/components/AiPlanList';
 import axios from 'axios';
 
 const Home: React.FC = () => {
     const [plan, setPlan] = useState<Plan | null>(null);
-    const [savedPlan, setSavedPlan] = useState<Plan | null>(null);
     const [planItems, setPlanItems] = useState<PlanItem[][]>();
     const [loading, setLoading] = useState(false);
     const planListRef = useRef<HTMLDivElement>(null);
@@ -18,7 +16,7 @@ const Home: React.FC = () => {
             setLoading(true);
 
             const response = await axios.post('/api/plan/ai', plan);
-            const generatedPlans = response.data.plans;
+            const generatedPlans = response.data.itemPlans;
             console.log("handleFormSubmit:", generatedPlans);
             setPlanItems(generatedPlans);
             setPlan(plan);
@@ -32,7 +30,7 @@ const Home: React.FC = () => {
         }
     };
 
-    const handleSavePlans = async () => {
+    const handleSavePlan = async () => {
         if (!plan || !planItems) return;
 
         try {
@@ -53,7 +51,7 @@ const Home: React.FC = () => {
 
     return (
         <div>
-            <h1 className="text-center text-3xl p-3">Travel Planner</h1>
+            <h1 className="text-center text-3xl p-3">AI Planner</h1>
             <PlanForm onSubmit={handleFormSubmit} />
             {loading && (
                 <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
@@ -63,18 +61,18 @@ const Home: React.FC = () => {
                 </div>
             )}
             <div ref={planListRef}>
-                {planItems && <TravelPlanList planItems={planItems} />}
+                {planItems && <AiPlanList planItems={planItems} />}
+                {planItems && (
+                    <div className="text-center mt-4">
+                        <button
+                            onClick={handleSavePlan}
+                            className="py-2 px-4 bg-green-500 text-white font-semibold rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                        >
+                            Save
+                        </button>
+                    </div>
+                )}
             </div>
-            {planItems && (
-                <div className="text-center mt-4">
-                    <button
-                        onClick={handleSavePlans}
-                        className="py-2 px-4 bg-green-500 text-white font-semibold rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-                    >
-                        Save Plan
-                    </button>
-                </div>
-            )}
         </div>
     );
 };

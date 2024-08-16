@@ -1,9 +1,10 @@
 interface Plan {
-    id: number;
+    id?: number;
     departure: string;
     destination: string;
-    departureDate: string;
-    arrivalDate: string;
+    departureDate: Date;
+    arrivalDate: Date;
     budget?: number;
     keyword?: string;
+    planItems?: PlanItem[][];
 }

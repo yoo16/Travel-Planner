@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Plan } from '@/app/interfaces/Plan';
 import { CreatePlan } from '@/app/services/AIPlan';
 
 

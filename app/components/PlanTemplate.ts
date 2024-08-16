@@ -1,5 +1,3 @@
-import { Plan } from "@/app/interfaces/Plan";
-
 export const createPrompt = (plan: Plan) => {
     var prompt = "つぎの条件で旅行プランを作成、 マークダウンを除いたJSONフォーマットのみでレスポンスして\n"
     for (var column in plan) {

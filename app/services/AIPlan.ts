@@ -1,5 +1,4 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { Plan } from "@/app/interfaces/Plan";
 import { createPrompt } from "@/app/components/PlanTemplate";
 import fs from 'fs';
 import path from 'path';

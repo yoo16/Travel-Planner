@@ -1,15 +1,15 @@
 'use client';
 
 import React, { useState } from 'react';
-import PlanItemForm from '@/app/components/PlanItemForm';  // PlanItemFormをインポート
+import PlanItemForm from '@/app/components/PlanItemForm';
+import PlanItemDisplay from './PlanItemDisplay';
 
 interface PlanItemListProps {
     plan: Plan;
-    planItems: PlanItem[];
     onUpdate: (updatedItem: PlanItem) => void;
 }
 
-const PlanItemList: React.FC<PlanItemListProps> = ({ plan, planItems, onUpdate }) => {
+const PlanItemList: React.FC<PlanItemListProps> = ({ plan, onUpdate }) => {
     const [editingItem, setEditingItem] = useState<PlanItem | null>(null);
 
     const handleEditClick = (item: PlanItem) => {
@@ -26,36 +26,36 @@ const PlanItemList: React.FC<PlanItemListProps> = ({ plan, planItems, onUpdate }
     };
 
     return (
-        <ul className="m-4">
-            {planItems.map((item) => (
-                <li key={item.id} className="p-4 border-b">
-                    {editingItem && editingItem.id === item.id ? (
-                        <PlanItemForm plan={plan} planItem={editingItem} onSubmit={handleUpdate} onClose={handleCancelEdit} />
-                    ) : (
-                        <div className="flex">
-                            <div>
-                                <button
-                                    onClick={() => handleEditClick(item)}
-                                    className="mx-4 py-1 px-3 bg-yellow-500 text-white rounded-md hover:bg-yellow-600"
-                                >
-                                    編集
-                                </button>
-                            </div>
-                            <div>
-                                <span className="me-3">{new Date(item.date).toLocaleDateString()}</span>
-                                <span className="p-2 me-3 text-xs text-white bg-green-500">アクティビティ</span>
-                                <span className="me-3">{item.activity}</span>
-                                <span className="p-2 me-3 text-xs text-white bg-green-500">場所</span>
-                                <span className="me-3">{item.place}</span>
-                                <span className="p-2 me-3 text-xs text-white bg-green-500">交通手段</span>
-                                <span>{item.transportation}</span>
-                                <p className="py-3">{item.memo}</p>
-                            </div>
+        <>
+            <div className="m-5">
+                {plan?.planItems && plan.planItems.map((dayPlans, dayIndex) => (
+                    <div key={dayIndex} className="border-b p-6">
+                        <h2 className="text-2xl font-bold text-gray-600 mb-6">
+                            {new Date(dayPlans[0].date).toLocaleDateString()} - {dayIndex + 1}日目 -
+                        </h2>
+                        <div className="space-y-4">
+                            {dayPlans.map((planItem, index) => (
+                                <div key={index} className="bg-gray-100 p-3 rounded-lg shadow">
+                                    {editingItem && editingItem.id === planItem.id ? (
+                                        <PlanItemForm
+                                            plan={plan}
+                                            planItem={editingItem}
+                                            onSubmit={handleUpdate}
+                                            onClose={handleCancelEdit}
+                                        />
+                                    ) : (
+                                        <PlanItemDisplay
+                                            planItem={planItem}
+                                            onEdit={() => handleEditClick(planItem)}
+                                        />
+                                    )}
+                                </div>
+                            ))}
                         </div>
-                    )}
-                </li>
-            ))}
-        </ul>
+                    </div>
+                ))}
+            </div>
+        </>
     );
 };
 

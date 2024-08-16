@@ -17,17 +17,18 @@ const PlanDetailPage: React.FC = () => {
     useEffect(() => {
         if (!id) return;
 
-        const fetchPlanDetails = async () => {
+        const fetchPlan = async () => {
             try {
-                const planResponse = await axios.get(`/api/plan/${id}`);
-                setPlan(planResponse.data);
-                setPlanItems(planResponse.data.planItems);
+                const response = await axios.get(`/api/plan/${id}`);
+                console.log(response.data.planItems)
+                setPlan(response.data);
+                setPlanItems(response.data.planItems);
             } catch (error) {
                 console.error('Error fetching plan details:', error);
             }
         };
 
-        fetchPlanDetails();
+        fetchPlan();
     }, [id]);
 
     const handleAddPlanItem = (newPlanItem: PlanItem) => {
@@ -86,7 +87,7 @@ const PlanDetailPage: React.FC = () => {
                 <PlanItemForm plan={plan} onSubmit={handleAddPlanItem} onClose={handleHideForm} />
             )}
 
-            <PlanItemList plan={plan} planItems={planItems} onUpdate={handleUpdatePlanItem} />
+            <PlanItemList plan={plan} onUpdate={handleUpdatePlanItem} />
         </div>
     );
 };

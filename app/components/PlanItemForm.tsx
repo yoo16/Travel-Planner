@@ -22,7 +22,7 @@ const PlanItemForm: React.FC<PlanItemFormProps> = ({ plan, planItem, onSubmit, o
 
     const dateOptions = getDateRange(plan.departureDate, plan.arrivalDate);
 
-    function getDateRange(startDate: string, endDate: string): string[] {
+    function getDateRange(startDate: Date, endDate: Date): string[] {
         const start = new Date(startDate);
         const end = new Date(endDate);
         const dateList: string[] = [];
@@ -89,57 +89,59 @@ const PlanItemForm: React.FC<PlanItemFormProps> = ({ plan, planItem, onSubmit, o
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4 p-4 border rounded-lg shadow-md">
-            <div className="flex flex-col">
-                <label className="mb-2 font-semibold">日付:</label>
-                <select
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                    className="p-2 border border-gray-300 rounded-md"
-                    required
-                >
-                    <option>日付を選択</option>
-                    {dateOptions.map((dateOption) => (
-                        <option key={dateOption} value={dateOption}>
-                            {new Date(dateOption).toLocaleDateString()}
-                        </option>
-                    ))}
-                </select>
-            </div>
-
-            <div className="flex flex-col">
-                <label className="mb-2 font-semibold">交通手段:</label>
-                <div className="flex items-center">
-                    <button
-                        type="button"
-                        onClick={handleShowSuggestions}
-                        className="p-2 me-2 text-sm rounded border border-blue-500 text-blue-500"
+        <form onSubmit={handleSubmit} className="space-y-4 p-4">
+            <div className="flex">
+                <div className="flex flex-col w-1/2">
+                    <label className="mb-2 font-semibold">日付:</label>
+                    <select
+                        value={date}
+                        onChange={(e) => setDate(e.target.value)}
+                        className=" p-2 border border-gray-300 rounded-md"
+                        required
                     >
-                        候補
-                    </button>
-                    <input
-                        type="text"
-                        value={transportation}
-                        onChange={handleTransportationChange}
-                        className="p-2 border border-gray-300 rounded-md flex-grow"
-                        placeholder="交通手段を入力"
-                    />
+                        <option>日付を選択</option>
+                        {dateOptions.map((dateOption) => (
+                            <option key={dateOption} value={dateOption}>
+                                {new Date(dateOption).toLocaleDateString()}
+                            </option>
+                        ))}
+                    </select>
                 </div>
-                {showSuggestions && transportationSuggestions.length > 0 && (
-                    <>
-                        <ul className="z-10 bg-white border border-gray-300 rounded-md mt-1 max-h-40 overflow-y-auto w-1/2">
-                            {transportationSuggestions.map((suggestion, index) => (
-                                <li
-                                    key={index}
-                                    onClick={() => handleSuggestionClick(suggestion)}
-                                    className="p-2 cursor-pointer hover:bg-gray-200"
-                                >
-                                    {suggestion}
-                                </li>
-                            ))}
-                        </ul>
-                    </>
-                )}
+
+                <div className="flex flex-col">
+                    <label className="mb-2 font-semibold">交通手段:</label>
+                    <div className="flex items-center">
+                        <button
+                            type="button"
+                            onClick={handleShowSuggestions}
+                            className="p-2 mx-2 text-sm rounded border border-blue-500 text-blue-500"
+                        >
+                            候補
+                        </button>
+                        <input
+                            type="text"
+                            value={transportation}
+                            onChange={handleTransportationChange}
+                            className="p-2 border border-gray-300 rounded-md flex-grow"
+                            placeholder="交通手段を入力"
+                        />
+                    </div>
+                    {showSuggestions && transportationSuggestions.length > 0 && (
+                        <>
+                            <ul className="z-10 bg-white border border-gray-300 rounded-md mt-1 max-h-40 overflow-y-auto w-1/2">
+                                {transportationSuggestions.map((suggestion, index) => (
+                                    <li
+                                        key={index}
+                                        onClick={() => handleSuggestionClick(suggestion)}
+                                        className="p-2 cursor-pointer hover:bg-gray-200"
+                                    >
+                                        {suggestion}
+                                    </li>
+                                ))}
+                            </ul>
+                        </>
+                    )}
+                </div>
             </div>
 
             <div className="flex flex-col">
@@ -152,6 +154,7 @@ const PlanItemForm: React.FC<PlanItemFormProps> = ({ plan, planItem, onSubmit, o
                     required
                 />
             </div>
+
 
             <div className="flex flex-col">
                 <label className="mb-2 font-semibold">アクティビティ:</label>
@@ -173,7 +176,7 @@ const PlanItemForm: React.FC<PlanItemFormProps> = ({ plan, planItem, onSubmit, o
                 />
             </div>
 
-            <div className="flex justify-between">
+            <div className="flex justify-end">
                 <button
                     type="submit"
                     className="py-2 px-4 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600"
@@ -183,7 +186,7 @@ const PlanItemForm: React.FC<PlanItemFormProps> = ({ plan, planItem, onSubmit, o
                 <button
                     type="button"
                     onClick={onClose}
-                    className="py-2 px-4 bg-gray-500 text-white font-semibold rounded-md hover:bg-gray-600"
+                    className="ms-3 py-2 px-4 bg-gray-500 text-white font-semibold rounded-md hover:bg-gray-600"
                 >
                     Cancel
                 </button>

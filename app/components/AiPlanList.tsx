@@ -1,17 +1,16 @@
 import React from 'react';
-import { Plan } from '@/app/interfaces/Plan';
 
-interface TravelPlanListProps {
+interface AiPlanListProps {
     planItems: PlanItem[][];
 }
 
-const TravelPlanList: React.FC<TravelPlanListProps> = ({planItems }) => {
+const AiPlanList: React.FC<AiPlanListProps> = ({ planItems }) => {
     return (
         <div className="m-5">
             {planItems.map((dayPlans, dayIndex) => (
                 <div key={dayIndex} className="border-b p-6">
                     <h2 className="text-2xl font-bold text-gray-600 mb-6">
-                        {dayPlans[0].date} - {dayIndex + 1}日目 -
+                        {new Date(dayPlans[0].date).toLocaleDateString()} - {dayIndex + 1}日目 -
                     </h2>
                     <div className="space-y-4">
                         {dayPlans.map((plan, index) => (
@@ -50,4 +49,4 @@ const TravelPlanList: React.FC<TravelPlanListProps> = ({planItems }) => {
     );
 };
 
-export default TravelPlanList;
+export default AiPlanList;

@@ -35,9 +35,8 @@ const Home: React.FC = () => {
 
     return (
         <div>
-            <h1 className="text-center text-3xl p-3">Travel Plans</h1>
+            <h1 className="text-center text-3xl p-3">Travel Planner</h1>
             <div className="p-6">
-                <h2 className="text-2xl font-semibold">リスト</h2>
                 <ul className="space-y-4 mt-4">
                     {plans.map(plan => (
                         <li key={plan.id} className="p-4">

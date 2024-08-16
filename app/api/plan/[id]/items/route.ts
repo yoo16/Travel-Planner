@@ -9,7 +9,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     try {
         const planItems = await prisma.planItem.findMany({
             where: { planId: parseInt(id) },
-            orderBy: { date: 'asc' }, // 日付順に並べ替え
+            orderBy: { date: 'asc' },
         });
 
         return NextResponse.json(planItems, { status: 200 });

@@ -7,8 +7,8 @@ export async function POST(req: NextRequest) {
     try {
         const { plan, planItems } = await req.json();
 
-        // console.log("Plan: ", plan);
-        // console.log("Plan Items:", planItems);
+        console.log("Plan: ", plan);
+        console.log("Plan Items:", planItems);
 
         plan.departureDate = new Date(plan.departureDate)
         plan.arrivalDate = new Date(plan.arrivalDate)
