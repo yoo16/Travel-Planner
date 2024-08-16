@@ -6,17 +6,23 @@ import axios from 'axios';
 import Loading from './Loading';
 import { dateToString } from '@/app/services/Date';
 
-interface EditPlanProps {
-    editingPlan: Plan,
-    onSubmit: (plan: Plan) => void;
+interface CreatePlanFormProps {
+    onSave: (plan: Plan) => void;
     onClose: () => void;
 }
 
+const initPlan:Plan = {
+    departure: '',
+    destination: '',
+    departureDate: new Date(),
+    arrivalDate: new Date(),
+    budget: 30000,
+    keyword: '',
+}
 
-const EditPlan: React.FC<EditPlanProps> = ({ editingPlan, onSubmit, onClose }) => {
-    const [plan, setPlan] = useState<Plan>(editingPlan);
+const CreatePlanForm: React.FC<CreatePlanFormProps> = ({ onSave, onClose }) => {
+    const [plan, setPlan] = useState<Plan>(initPlan);
     const [loading, setLoading] = useState(false);
-    const router = useRouter();
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -24,6 +30,17 @@ const EditPlan: React.FC<EditPlanProps> = ({ editingPlan, onSubmit, onClose }) =
             ...prevPlan,
             [name]: value
         }));
+        console.log(plan)
+    };
+
+    const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        
+        setPlan(prevPlan => ({
+            ...prevPlan,
+            [name]: new Date(value).toISOString()
+        }));
+        console.log(plan)
     };
 
     const handleBudgetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,17 +50,12 @@ const EditPlan: React.FC<EditPlanProps> = ({ editingPlan, onSubmit, onClose }) =
         }));
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        onSubmit(plan);
-    };
-
     const handleSave = async () => {
         try {
             setLoading(true);
-            const uri = `/api/plan/${plan.id}/update`;
-            await axios.put(uri, plan);
-            router.push('/');
+            const uri = `/api/plan/save`;
+            await axios.post(uri, plan);
+            onSave(plan);
         } catch (error) {
             console.error('Error saving plan:', error);
         } finally {
@@ -55,7 +67,6 @@ const EditPlan: React.FC<EditPlanProps> = ({ editingPlan, onSubmit, onClose }) =
         <>
             {loading && <Loading />}
             <div className="max-w-lg mx-auto p-6 bg-white shadow-md rounded-lg space-y-6">
-
                 <div className="flex flex-col">
                     <label className="mb-2 font-semibold text-lg">出発地 - 目的地:</label>
                     <div className="flex">
@@ -82,14 +93,14 @@ const EditPlan: React.FC<EditPlanProps> = ({ editingPlan, onSubmit, onClose }) =
                             type="date"
                             name="departureDate"
                             value={dateToString(plan.departureDate)}
-                            onChange={handleInputChange}
+                            onChange={handleDateChange}
                             className="w-1/2 me-2 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                         <input
                             type="date"
                             name="arrivalDate"
-                            value={dateToString(plan.arrivalDate)}
-                            onChange={handleInputChange}
+                            value={dateToString(plan.departureDate)}
+                            onChange={handleDateChange}
                             className="w-1/2 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
@@ -132,9 +143,6 @@ const EditPlan: React.FC<EditPlanProps> = ({ editingPlan, onSubmit, onClose }) =
                         className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                 </div>
-                <button onClick={handleSubmit} type="submit" className="w-full py-2 px-4 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                    AIプラン
-                </button>
                 <div className="flex justify-center">
                     <button
                         onClick={handleSave}
@@ -154,4 +162,4 @@ const EditPlan: React.FC<EditPlanProps> = ({ editingPlan, onSubmit, onClose }) =
     );
 };
 
-export default EditPlan;
+export default CreatePlanForm;

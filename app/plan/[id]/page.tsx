@@ -71,7 +71,7 @@ const PlanDetailPage: React.FC = () => {
                             onClick={handleShowForm}
                             className="py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600"
                         >
-                            新規追加
+                            New
                         </Link>
 
                         <Link href="/"

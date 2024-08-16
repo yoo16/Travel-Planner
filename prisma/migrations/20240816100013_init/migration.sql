@@ -7,6 +7,9 @@ CREATE TABLE `plans` (
     `arrivalDate` DATETIME(3) NOT NULL,
     `budget` DOUBLE NULL,
     `keyword` VARCHAR(191) NULL,
+    `order` INTEGER NULL DEFAULT 0,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -15,11 +18,14 @@ CREATE TABLE `plans` (
 CREATE TABLE `plan_items` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `date` DATETIME(3) NOT NULL,
-    `transportation` VARCHAR(191) NOT NULL,
+    `transportation` VARCHAR(191) NULL,
     `place` VARCHAR(191) NOT NULL,
     `activity` VARCHAR(191) NOT NULL,
-    `memo` VARCHAR(191) NOT NULL,
+    `memo` VARCHAR(191) NULL,
     `planId` INTEGER NOT NULL,
+    `order` INTEGER NULL DEFAULT 0,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

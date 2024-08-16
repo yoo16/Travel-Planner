@@ -5,7 +5,11 @@ const prisma = new PrismaClient();
 
 export async function GET(req: NextRequest) {
     try {
-        const plans = await prisma.plan.findMany({});
+        const plans = await prisma.plan.findMany({
+            orderBy: {
+                createdAt: 'desc',
+            }
+        });
         return NextResponse.json(plans, { status: 200 });
     } catch (error) {
         return NextResponse.json({ error: 'Failed to fetch plans' }, { status: 500 });

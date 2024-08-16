@@ -5,13 +5,15 @@ import axios from 'axios';
 import Link from 'next/link';
 import Loading from '@/app/components/Loading';
 import { dateToString } from './services/Date';
-import EditPlan from './components/EditPlan';
+import EditPlanForm from '@/app/components/EditPlanForm';
+import CreatePlanForm from '@/app/components/CreatePlanForm';
 
 const Home: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [plans, setPlans] = useState<Plan[]>([]);
     const [editingPlan, setEditingPlan] = useState<Plan | null>(null);
-    const [isFormVisible, setIsFormVisible] = useState(false);
+    const [isCreateFormVisible, setIsCreateFormVisible] = useState(false);
+    const [isEditFormVisible, setIsEditFormVisible] = useState(false);
 
     useEffect(() => {
         const fetchPlans = async () => {
@@ -28,30 +30,63 @@ const Home: React.FC = () => {
         fetchPlans();
     }, []);
 
-    const onEdit = (plan: Plan) => {
-        setEditingPlan(plan);
-        setIsFormVisible(true)
+    const onCreate = () => {
+        setIsCreateFormVisible(true)
     };
 
-    const handleCancelEdit = () => {
+    const onSave = (updatedPlan: Plan) => {
+        setPlans(prevPlans => [...prevPlans, updatedPlan]);
+        setIsCreateFormVisible(false);
+    };
+
+    const onCancelCreate = () => {
+        setIsCreateFormVisible(false)
+    };
+
+    const onEdit = (plan: Plan) => {
+        setEditingPlan(plan);
+        setIsEditFormVisible(true)
+    };
+
+    const onUpdate = (updatedPlan: Plan) => {
+        setPlans(prevPlans =>
+            prevPlans.map(plan => (plan.id === updatedPlan.id ? updatedPlan : plan))
+        );
         setEditingPlan(null);
-        setIsFormVisible(false)
+        setIsEditFormVisible(false);
+    };
+
+    const onCancelEdit = () => {
+        setEditingPlan(null);
+        setIsEditFormVisible(false)
     };
 
     return (
         <div>
             {loading && <Loading />}
             <h1 className="text-center text-3xl p-3">Travel Planner</h1>
+            {isCreateFormVisible &&
+                <CreatePlanForm
+                    onSave={onSave}
+                    onClose={onCancelCreate}
+                />
+            }
             <div className="p-6">
+                <button
+                    onClick={onCreate}
+                    className="mx-3 py-1 px-4 bg-yellow-500 text-white rounded-md"
+                >
+                    New
+                </button>
                 <ul className="space-y-4 mt-4">
                     {plans.map(plan => (
-                        <li key={plan.id} className="p-4">
+                        <li key={plan.id} className="py-2">
 
                             {editingPlan && editingPlan.id === plan.id ? (
-                                <EditPlan
+                                <EditPlanForm
                                     editingPlan={editingPlan}
-                                    onSubmit={() => handleCancelEdit()}
-                                    onClose={() => handleCancelEdit()}
+                                    onUpdate={onUpdate}
+                                    onClose={onCancelEdit}
                                 />
                             ) : (
                                 <div className="flex">
