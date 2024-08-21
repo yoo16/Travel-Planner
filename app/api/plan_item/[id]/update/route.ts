@@ -8,24 +8,28 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
         const planItem = await req.json();
         const { id } = params;
 
-        console.log(planItem);
+        if (!id) {
+            return NextResponse.json({ error: 'ID is required' }, { status: 400 });
+        }
 
+        console.log("ID: ", id)
+        var updatePlanItem = await prisma.planItem.findUnique({
+            where: { id: parseInt(id) },
+        });
+
+
+        console.log("PlanItem:", updatePlanItem)
+        console.log("PlanItem:", planItem)
         try {
-            const savedItem = await prisma.planItem.update({
+            var savedItem = await prisma.planItem.update({
                 where: { id: parseInt(id) },
-                data: {
-                    date: planItem.date,
-                    transportation: planItem.transportation,
-                    place: planItem.place,
-                    activity: planItem.activity,
-                    memo: planItem.memo,
-                    planId: planItem.planId,
-                },
+                data: planItem,
             });
+
             return NextResponse.json(savedItem);
         } catch (error) {
-            console.log(error);
-            return NextResponse.json({ error: error }, { status: 500 });
+            console.error(error);
+            return NextResponse.json({ error: 'Failed to save or update plan item' }, { status: 500 });
         }
     } catch (error) {
         return NextResponse.json({ error: 'Invalid input' }, { status: 400 });

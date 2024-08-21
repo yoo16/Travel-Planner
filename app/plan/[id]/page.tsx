@@ -83,7 +83,7 @@ const PlanDetailPage: React.FC = () => {
                         </Link>
                     </div>
 
-                    <PlanItemList plan={plan} planItems={planItems} />
+                    <PlanItemList plan={plan} initialPlanItems={planItems} />
                 </div>
             }
         </div>

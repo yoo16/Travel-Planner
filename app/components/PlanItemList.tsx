@@ -9,11 +9,25 @@ import axios from 'axios';
 
 interface PlanItemListProps {
     plan: Plan;
-    planItems: PlanItem[][];
+    initialPlanItems: PlanItem[][];
 }
 
-const PlanItemList: React.FC<PlanItemListProps> = ({ plan, planItems }) => {
+const PlanItemList: React.FC<PlanItemListProps> = ({ plan, initialPlanItems }) => {
+    const [planItems, setPlanItems] = useState<PlanItem[][]>(initialPlanItems);
     const [editingItem, setEditingItem] = useState<PlanItem | null>(null);
+
+    const fetchPlanItems = async () => {
+        if (!plan.id) return;
+
+        try {
+            const response = await axios.get(`/api/plan/${plan.id}`);
+            if (response.status === 200) {
+                setPlanItems(response.data.planItems);
+            }
+        } catch (error) {
+            console.error('Error fetching plan items:', error);
+        }
+    };
 
     const onAdd = async (e: React.MouseEvent, dateOption: string) => {
         e.preventDefault();
@@ -30,10 +44,20 @@ const PlanItemList: React.FC<PlanItemListProps> = ({ plan, planItems }) => {
             };
             const uri = `/api/plan_item/add`;
             const response = await axios.post(uri, newPlanItem);
+            const planItem = response.data;
+            console.log(planItem);
 
-            if (response.status === 200) {
-                console.log('PlanItem added:', response.data);
-                setEditingItem(response.data);
+            if (planItem.id > 0) {
+                const updatedPlanItems = [...planItems];
+                const dayIndex = dateList(plan.departureDate, plan.arrivalDate).indexOf(dateOption);
+
+                if (updatedPlanItems[dayIndex]) {
+                    updatedPlanItems[dayIndex] = [...updatedPlanItems[dayIndex], planItem];
+                } else {
+                    updatedPlanItems[dayIndex] = [planItem];
+                }
+                setPlanItems(updatedPlanItems);
+                onEdit(planItem);
             }
         } catch (error) {
             console.error('Error saving plan item:', error);
@@ -48,14 +72,14 @@ const PlanItemList: React.FC<PlanItemListProps> = ({ plan, planItems }) => {
         setEditingItem(null);
     }
 
-    const onUpdate = (updatedItem: PlanItem) => {
+    const onUpdate = async (updatedItem: PlanItem) => {
+        await fetchPlanItems();
         setEditingItem(null);
-        // 更新後の処理を追加
     };
 
-    const onDelete = () => {
+    const onDelete = async () => {
+        await fetchPlanItems();
         setEditingItem(null);
-        // 削除後の処理を追加
     };
 
     return (
@@ -80,7 +104,6 @@ const PlanItemList: React.FC<PlanItemListProps> = ({ plan, planItems }) => {
                         <div className="space-y-4">
                             {planItems[dayIndex] && planItems[dayIndex].map((planItem, planItemIndex) => (
                                 <div key={planItemIndex}>
-
                                     {editingItem && planItem.id === editingItem.id ? (
                                         <PlanItemForm
                                             plan={plan}

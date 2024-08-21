@@ -7,21 +7,14 @@ import { dateList, dateToString } from '@/app/services/Date';
 
 interface PlanItemFormProps {
     plan: Plan,
-    planItem?: PlanItem;
+    planItem: PlanItem;
     onSubmit: (planItem: PlanItem) => void;
     onClose: () => void;
     onDelete: (planItemId: number) => void;
 }
 
 const PlanItemForm: React.FC<PlanItemFormProps> = ({ plan, planItem, onSubmit, onClose, onDelete }) => {
-    const [editPlanItem, setEditPlanItem] = useState<PlanItem>({
-        date: planItem ? planItem.date : new Date(),
-        transportation: planItem ? planItem.transportation : '',
-        place: planItem ? planItem.place : '',
-        activity: planItem ? planItem.activity : '',
-        memo: planItem ? planItem.memo : '',
-        planId: plan.id ?? 0,
-    });
+    const [editPlanItem, setEditPlanItem] = useState<PlanItem>(planItem);
 
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [transportationSuggestions, setTransportationSuggestions] = useState<string[]>([]);
@@ -47,7 +40,7 @@ const PlanItemForm: React.FC<PlanItemFormProps> = ({ plan, planItem, onSubmit, o
         if (typeof plan?.id === 'undefined') return;
 
         try {
-            const uri = `/api/plan_item/${plan.id}/update`;
+            const uri = `/api/plan_item/${editPlanItem.id}/update`;
             const response = await axios.post(uri, editPlanItem);
 
             if (response.status == 200) {
@@ -190,28 +183,20 @@ const PlanItemForm: React.FC<PlanItemFormProps> = ({ plan, planItem, onSubmit, o
 
             <div className="flex justify-between space-x-3">
                 <div className="flex space-x-3">
-                    {planItem?.id ? (
-                        <>
-                            <button
-                                type="button"
-                                onClick={onUpdate}
-                                className="py-2 px-4 text-sm bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600"
-                            >
-                                Update
-                            </button>
-                            <button
-                                type="button"
-                                onClick={handleDelete}
-                                className="py-2 px-4 text-sm bg-red-500 text-white font-semibold rounded-md hover:bg-red-600"
-                            >
-                                Delete
-                            </button>
-                        </>
-                    ) : (
-                        <>
-
-                        </>
-                    )}
+                    <button
+                        type="button"
+                        onClick={onUpdate}
+                        className="py-2 px-4 text-sm bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600"
+                    >
+                        Update
+                    </button>
+                    <button
+                        type="button"
+                        onClick={handleDelete}
+                        className="py-2 px-4 text-sm bg-red-500 text-white font-semibold rounded-md hover:bg-red-600"
+                    >
+                        Delete
+                    </button>
                     <button
                         type="button"
                         onClick={onClose}
