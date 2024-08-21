@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { dateToString } from '@/app/services/Date';
 
 interface TravelFormProps {
-    onSubmit: (plan: Plan) => void;
+    onAiCreate: (plan: Plan) => void;
     editPlan?: Plan,
 }
 
@@ -17,7 +17,7 @@ const initPlan:Plan = {
     keyword: '',
 }
 
-const AiPlanForm: React.FC<TravelFormProps> = ({ onSubmit, editPlan }) => {
+const AiPlanForm: React.FC<TravelFormProps> = ({ onAiCreate, editPlan }) => {
     const [plan, setPlan] = useState<Plan>(editPlan ? editPlan : initPlan);
     
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,6 +28,15 @@ const AiPlanForm: React.FC<TravelFormProps> = ({ onSubmit, editPlan }) => {
         }));
     };
 
+    const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+
+        setPlan(prevPlan => ({
+            ...prevPlan,
+            [name]: new Date(value).toISOString()
+        }));
+    };
+
     const handleBudgetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPlan(prevPlan => ({
             ...prevPlan,
@@ -35,9 +44,10 @@ const AiPlanForm: React.FC<TravelFormProps> = ({ onSubmit, editPlan }) => {
         }));
     };
 
+    
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        onSubmit(plan);
+        onAiCreate(plan);
     };
 
     return (
@@ -69,14 +79,14 @@ const AiPlanForm: React.FC<TravelFormProps> = ({ onSubmit, editPlan }) => {
                         type="date"
                         name="departureDate"
                         value={dateToString(plan.departureDate)}
-                        onChange={handleInputChange}
+                        onChange={handleDateChange}
                         className="w-1/2 me-2 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <input
                         type="date"
                         name="arrivalDate"
                         value={dateToString(plan.arrivalDate)}
-                        onChange={handleInputChange}
+                        onChange={handleDateChange}
                         className="w-1/2 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                 </div>

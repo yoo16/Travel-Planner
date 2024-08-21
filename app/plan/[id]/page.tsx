@@ -15,7 +15,6 @@ const PlanDetailPage: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [plan, setPlan] = useState<Plan>();
     const [planItems, setPlanItems] = useState<PlanItem[][]>([]);
-    const [isFormVisible, setIsFormVisible] = useState(false);
 
     const fetchPlan = useCallback(async () => {
         if (!id) return;
@@ -34,25 +33,6 @@ const PlanDetailPage: React.FC = () => {
     useEffect(() => {
         fetchPlan();
     }, [fetchPlan]);
-
-    const handleAddPlanItem = async () => {
-        fetchPlan();
-        setIsFormVisible(false);
-    };
-
-    const handleUpdatePlanItem = () => {
-        fetchPlan();
-        setIsFormVisible(false);
-    };
-
-    const handleShowForm = () => {
-        setIsFormVisible(true);
-    };
-
-    const handleHideForm = () => {
-        setIsFormVisible(false);
-    }
-
 
     const onAiCreate = async () => {
         if (!plan || !planItems) return;
@@ -95,35 +75,15 @@ const PlanDetailPage: React.FC = () => {
                     </span>
                     {plan.budget?.toLocaleString()}円
                     <div className="py-6">
-                        <Link
-                            href="#"
-                            onClick={handleShowForm}
-                            className="me-2 py-1 px-4 bg-yellow-500 text-white rounded-md"
-                        >
-                            New
-                        </Link>
-
-                        <Link
-                            href="#"
-                            onClick={onAiCreate}
-                            className="me-2 py-1 px-4 bg-blue-500 text-white rounded-md"
-                        >
-                            Create AI Plan
-                        </Link>
-
 
                         <Link href="/"
                             className="me-2 py-1 px-4 border border-blue-500 text-blue-500 rounded-md"
                         >
-                            戻る
+                            Back
                         </Link>
                     </div>
 
-                    {isFormVisible && (
-                        <PlanItemForm plan={plan} onSubmit={handleAddPlanItem} onClose={handleHideForm} />
-                    )}
-
-                    <PlanItemList plan={plan} planItems={planItems} onUpdate={handleUpdatePlanItem} />
+                    <PlanItemList plan={plan} planItems={planItems} />
                 </div>
             }
         </div>

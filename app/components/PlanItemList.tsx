@@ -3,60 +3,78 @@
 import React, { useState } from 'react';
 import PlanItemForm from '@/app/components/PlanItemForm';
 import PlanItemDisplay from './PlanItemDisplay';
+import { dateList } from '../services/Date';
+import Link from 'next/link';
 
 interface PlanItemListProps {
     plan: Plan;
     planItems: PlanItem[][];
-    onUpdate: (updatedItem: PlanItem) => void;
 }
 
-const PlanItemList: React.FC<PlanItemListProps> = ({ plan, planItems, onUpdate }) => {
+const PlanItemList: React.FC<PlanItemListProps> = ({ plan, planItems }) => {
     const [editingItem, setEditingItem] = useState<PlanItem | null>(null);
 
-    const handleEditClick = (item: PlanItem) => {
-        setEditingItem(item);
+    const onEdit = (planItem: PlanItem) => {
+        setEditingItem(planItem);
     };
 
-    const handleCancelEdit = () => {
+    const onCancelEdit = () => {
+        setEditingItem(null);
+    }
+
+    const onUpdate = (updatedItem: PlanItem) => {
         setEditingItem(null);
     };
 
-    const handleUpdate = (updatedItem: PlanItem) => {
-        onUpdate(updatedItem);
+    const onDelete = () => {
         setEditingItem(null);
+        planItems = [];
     };
 
     return (
-        <>
+        <div className="m-5">
             <div className="m-5">
-                {planItems && planItems.map((dayPlans, dayIndex) => (
+                {dateList(plan.departureDate, plan.arrivalDate).map((dateOption, dayIndex) => (
                     <div key={dayIndex} className="border-b p-6">
                         <h2 className="text-2xl font-bold text-gray-600 mb-6">
-                            {new Date(dayPlans[0].date).toLocaleDateString()} - {dayIndex + 1}日目 -
+                            {new Date(dateOption).toLocaleDateString()} - {dayIndex + 1}日目 -
                         </h2>
+
+                        <div className="my-2">
+                            <Link
+                                href="#"
+                                className="me-2 py-1 px-4 bg-yellow-500 text-white rounded-md"
+                            >
+                                Add
+                            </Link>
+                        </div>
+
                         <div className="space-y-4">
-                            {dayPlans.map((planItem, index) => (
-                                <div key={index} className="bg-gray-100 p-3 rounded-lg shadow">
-                                    {editingItem && editingItem.id === planItem.id ? (
+                            {planItems[dayIndex] && planItems[dayIndex].map((planItem, planItemIndex) => (
+                                <div key={planItemIndex}>
+
+                                    {editingItem && planItem.id === editingItem.id ? (
                                         <PlanItemForm
                                             plan={plan}
-                                            planItem={editingItem}
-                                            onSubmit={handleUpdate}
-                                            onClose={handleCancelEdit}
+                                            planItem={planItem}
+                                            onSubmit={onUpdate}
+                                            onDelete={onDelete}
+                                            onClose={onCancelEdit}
                                         />
                                     ) : (
                                         <PlanItemDisplay
                                             planItem={planItem}
-                                            onEdit={() => handleEditClick(planItem)}
+                                            onEdit={() => onEdit(planItem)}
                                         />
                                     )}
                                 </div>
                             ))}
                         </div>
+
                     </div>
                 ))}
             </div>
-        </>
+        </div>
     );
 };
 

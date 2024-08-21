@@ -1,76 +1,85 @@
 'use client';
 
 import axios from 'axios';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { transportations } from '@/app/data/transportations';
+import { dateList, dateToString } from '@/app/services/Date';
 
 interface PlanItemFormProps {
     plan: Plan,
     planItem?: PlanItem;
     onSubmit: (planItem: PlanItem) => void;
     onClose: () => void;
+    onDelete: (planItemId: number) => void;
 }
 
-const PlanItemForm: React.FC<PlanItemFormProps> = ({ plan, planItem, onSubmit, onClose }) => {
-    const [date, setDate] = useState(planItem ? new Date(planItem.date).toISOString().split('T')[0] : '');
-    const [transportation, setTransportation] = useState(planItem ? planItem.transportation : '');
-    const [transportationSuggestions, setTransportationSuggestions] = useState<string[]>([]);
-    const [place, setPlace] = useState(planItem ? planItem.place : '');
-    const [activity, setActivity] = useState(planItem ? planItem.activity : '');
-    const [memo, setMemo] = useState(planItem ? planItem.memo : '');
+const PlanItemForm: React.FC<PlanItemFormProps> = ({ plan, planItem, onSubmit, onClose, onDelete }) => {
+    const [editPlanItem, setEditPlanItem] = useState<PlanItem>({
+        date: planItem ? planItem.date : new Date(),
+        transportation: planItem ? planItem.transportation : '',
+        place: planItem ? planItem.place : '',
+        activity: planItem ? planItem.activity : '',
+        memo: planItem ? planItem.memo : '',
+        planId: plan.id ?? 0,
+    });
+
     const [showSuggestions, setShowSuggestions] = useState(false);
+    const [transportationSuggestions, setTransportationSuggestions] = useState<string[]>([]);
 
-    const dateOptions = getDateRange(plan.departureDate, plan.arrivalDate);
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target;
+        setEditPlanItem(prevPlanItem => ({
+            ...prevPlanItem,
+            [name]: value
+        }));
+    };
 
-    function getDateRange(startDate: Date, endDate: Date): string[] {
-        const start = new Date(startDate);
-        const end = new Date(endDate);
-        const dateList: string[] = [];
+    const handleDateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        setEditPlanItem(prevPlanItem => ({
+            ...prevPlanItem,
+            [name]: new Date(value).toISOString()
+        }));
+    };
 
-        while (start <= end) {
-            dateList.push(start.toISOString().split('T')[0]);
-            start.setDate(start.getDate() + 1);
-        }
-        return dateList;
-    }
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const onUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
-
         if (typeof plan?.id === 'undefined') return;
 
         try {
-            const editPlanItem: PlanItem = {
-                ...planItem,
-                date: new Date(date),
-                transportation,
-                place,
-                activity,
-                memo,
-                planId: plan.id ?? 0,
-            };
-            const uri = `/api/plan/${plan.id}/item/save`;
+            const uri = `/api/plan_item/${plan.id}/update`;
             const response = await axios.post(uri, editPlanItem);
 
             if (response.status == 200) {
-                setDate('');
-                setTransportation('');
-                setPlace('');
-                setActivity('');
-                setMemo('');
-                setShowSuggestions(false);
-
                 onSubmit(editPlanItem);
             }
         } catch (error) {
             console.error('Error saving plan item:', error);
         }
-
     };
 
-    const handleTransportationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleDelete = async () => {
+        if (!planItem || !planItem.id) return;
+
+        try {
+            const uri = `/api/plan_item/${planItem.id}/delete`;
+            const response = await axios.post(uri);
+
+            if (response.status == 200) {
+                onDelete(planItem.id);
+            }
+        } catch (error) {
+            console.error('Error deleting plan item:', error);
+        }
+    };
+
+    const handleTransportationChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const input = e.target.value;
-        setTransportation(input);
+        setEditPlanItem(prevPlanItem => ({
+            ...prevPlanItem,
+            transportation: input
+        }));
 
         const filteredSuggestions = transportations.filter((suggestion) =>
             suggestion.startsWith(input)
@@ -84,23 +93,26 @@ const PlanItemForm: React.FC<PlanItemFormProps> = ({ plan, planItem, onSubmit, o
     };
 
     const handleSuggestionClick = (suggestion: string) => {
-        setTransportation(suggestion);
+        setEditPlanItem(prevPlanItem => ({
+            ...prevPlanItem,
+            transportation: suggestion
+        }));
         setShowSuggestions(false);
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4 p-4">
-            <div className="flex">
-                <div className="flex flex-col w-1/2">
-                    <label className="mb-2 font-semibold">日付:</label>
+        <div className="space-y-6 p-6 bg-gray-50 rounded-md shadow-sm">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <div className="flex flex-col">
+                    <label className="text-sm font-semibold text-gray-600 mb-1">日付</label>
                     <select
-                        value={date}
-                        onChange={(e) => setDate(e.target.value)}
-                        className=" p-2 border border-gray-300 rounded-md"
+                        name="date"
+                        value={dateToString(editPlanItem.date)}
+                        onChange={handleDateChange}
+                        className="p-2 border border-gray-300 rounded-md"
                         required
                     >
-                        <option>日付を選択</option>
-                        {dateOptions.map((dateOption) => (
+                        {dateList(plan.departureDate, plan.arrivalDate).map((dateOption) => (
                             <option key={dateOption} value={dateOption}>
                                 {new Date(dateOption).toLocaleDateString()}
                             </option>
@@ -109,89 +121,108 @@ const PlanItemForm: React.FC<PlanItemFormProps> = ({ plan, planItem, onSubmit, o
                 </div>
 
                 <div className="flex flex-col">
-                    <label className="mb-2 font-semibold">交通手段:</label>
+                    <label className="text-sm font-semibold text-gray-600 mb-1">交通</label>
                     <div className="flex items-center">
+                        <input
+                            type="text"
+                            name="transportation"
+                            value={editPlanItem.transportation}
+                            onChange={handleTransportationChange}
+                            className="p-2 flex-grow border border-gray-300 rounded-md"
+                            placeholder="交通手段を入力"
+                        />
                         <button
                             type="button"
                             onClick={handleShowSuggestions}
-                            className="p-2 mx-2 text-sm rounded border border-blue-500 text-blue-500"
+                            className="ml-2 p-2 text-sm border border-blue-500 text-blue-500 rounded-md"
                         >
                             候補
                         </button>
-                        <input
-                            type="text"
-                            value={transportation}
-                            onChange={handleTransportationChange}
-                            className="p-2 border border-gray-300 rounded-md flex-grow"
-                            placeholder="交通手段を入力"
-                        />
                     </div>
                     {showSuggestions && transportationSuggestions.length > 0 && (
-                        <>
-                            <ul className="z-10 bg-white border border-gray-300 rounded-md mt-1 max-h-40 overflow-y-auto w-1/2">
-                                {transportationSuggestions.map((suggestion, index) => (
-                                    <li
-                                        key={index}
-                                        onClick={() => handleSuggestionClick(suggestion)}
-                                        className="p-2 cursor-pointer hover:bg-gray-200"
-                                    >
-                                        {suggestion}
-                                    </li>
-                                ))}
-                            </ul>
-                        </>
+                        <ul className="mt-2 bg-white border border-gray-300 rounded-md max-h-40 overflow-y-auto">
+                            {transportationSuggestions.map((suggestion, index) => (
+                                <li
+                                    key={index}
+                                    onClick={() => handleSuggestionClick(suggestion)}
+                                    className="p-2 cursor-pointer hover:bg-gray-200"
+                                >
+                                    {suggestion}
+                                </li>
+                            ))}
+                        </ul>
                     )}
                 </div>
             </div>
 
             <div className="flex flex-col">
-                <label className="mb-2 font-semibold">場所:</label>
+                <label className="text-sm font-semibold text-gray-600 mb-1">場所</label>
                 <input
                     type="text"
-                    value={place}
-                    onChange={(e) => setPlace(e.target.value)}
-                    className="p-2 border border-gray-300 rounded-md"
-                    required
-                />
-            </div>
-
-
-            <div className="flex flex-col">
-                <label className="mb-2 font-semibold">アクティビティ:</label>
-                <input
-                    type="text"
-                    value={activity}
-                    onChange={(e) => setActivity(e.target.value)}
+                    name="place"
+                    value={editPlanItem.place}
+                    onChange={handleInputChange}
                     className="p-2 border border-gray-300 rounded-md"
                     required
                 />
             </div>
 
             <div className="flex flex-col">
-                <label className="mb-2 font-semibold">メモ:</label>
+                <label className="text-sm font-semibold text-gray-600 mb-1">アクティビティ</label>
+                <input
+                    type="text"
+                    name="activity"
+                    value={editPlanItem.activity}
+                    onChange={handleInputChange}
+                    className="p-2 border border-gray-300 rounded-md"
+                    required
+                />
+            </div>
+
+            <div className="flex flex-col">
+                <label className="text-sm font-semibold text-gray-600 mb-1">Memo</label>
                 <textarea
-                    value={memo}
-                    onChange={(e) => setMemo(e.target.value)}
+                    name="memo"
+                    value={editPlanItem.memo}
+                    onChange={handleInputChange}
                     className="p-2 border border-gray-300 rounded-md"
                 />
             </div>
 
-            <div className="flex justify-end">
-                <button
-                    type="submit"
-                    className="py-2 px-4 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600"
-                >
-                    Save
-                </button>
-                <button
-                    type="button"
-                    onClick={onClose}
-                    className="ms-3 py-2 px-4 bg-gray-500 text-white font-semibold rounded-md hover:bg-gray-600"
-                >
-                    Cancel
-                </button>
+            <div className="flex justify-between space-x-3">
+                <div className="flex space-x-3">
+                    {planItem?.id ? (
+                        <>
+                            <button
+                                type="button"
+                                onClick={onUpdate}
+                                className="py-2 px-4 text-sm bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600"
+                            >
+                                Update
+                            </button>
+                            <button
+                                type="button"
+                                onClick={handleDelete}
+                                className="py-2 px-4 text-sm bg-red-500 text-white font-semibold rounded-md hover:bg-red-600"
+                            >
+                                Delete
+                            </button>
+                        </>
+                    ) : (
+                        <>
+
+                        </>
+                    )}
+                    <button
+                        type="button"
+                        onClick={onClose}
+                        className="py-2 px-4 text-sm bg-gray-500 text-white font-semibold rounded-md hover:bg-gray-600"
+                    >
+                        Cancel
+                    </button>
+                </div>
             </div>
-        </form>
+        </div>
     );
 };
 

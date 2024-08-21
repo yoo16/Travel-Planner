@@ -10,6 +10,7 @@ export async function POST(req: NextRequest) {
         console.log("Plan: ", plan);
         console.log("Plan Items:", planItems);
 
+        // Planを保存
         const savedPlan = await prisma.plan.create({
             data: plan,
         });
@@ -17,7 +18,10 @@ export async function POST(req: NextRequest) {
         const savedItems = [];
         for (const planItem of planItems) {
             const savedItem = await prisma.planItem.create({
-                data: planItem,
+                data: {
+                    ...planItem,
+                    planId: savedPlan.id,
+                },
             });
             savedItems.push(savedItem);
         }
@@ -25,6 +29,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ 
             success: true, 
             plan: savedPlan,
+            planItems: savedItems,
         });
     } catch (error) {
         console.error('Error saving plan:', error);

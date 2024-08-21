@@ -12,7 +12,7 @@ const Home: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const planListRef = useRef<HTMLDivElement>(null);
 
-    const handleFormSubmit = async (plan: Plan) => {
+    const onAiCreate = async (plan: Plan) => {
         try {
             setLoading(true);
 
@@ -53,7 +53,7 @@ const Home: React.FC = () => {
         <div className="pb-20">
             {loading && <Loading />}
             <h1 className="text-center text-3xl p-3">AI Planner</h1>
-            <AiPlanForm onSubmit={handleFormSubmit} />
+            <AiPlanForm onAiCreate={onAiCreate} />
             <div ref={planListRef}>
                 {planItems && <AiPlanList planItems={planItems} />}
                 {planItems && (
