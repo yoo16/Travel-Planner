@@ -10,9 +10,8 @@ import CreatePlanForm from '@/app/components/CreatePlanForm';
 import { useRouter } from 'next/navigation';
 
 const PlanCreatePage: React.FC = () => {
+    const { setLoading } = useLoading();
     const router = useRouter();
-
-    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
     }, []);
@@ -27,7 +26,6 @@ const PlanCreatePage: React.FC = () => {
 
     return (
         <div>
-            {loading && <Loading />}
             <h1 className="text-center text-3xl p-3">Travel Planner</h1>
             <CreatePlanForm
                 onSave={onSave}

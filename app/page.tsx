@@ -5,11 +5,11 @@ import axios from 'axios';
 import Link from 'next/link';
 import Loading from '@/app/components/Loading';
 import { dateToString } from './services/Date';
-import EditPlanForm from '@/app/components/EditPlanForm';
-import CreatePlanForm from '@/app/components/CreatePlanForm';
+import { useLoading } from '@/app/context/LoadingContext';
 
 const Home: React.FC = () => {
-    const [loading, setLoading] = useState(false);
+    const { setLoading } = useLoading();
+
     const [plans, setPlans] = useState<Plan[]>([]);
     const [editingPlan, setEditingPlan] = useState<Plan | null>(null);
     const [isCreateFormVisible, setIsCreateFormVisible] = useState(false);
@@ -47,7 +47,6 @@ const Home: React.FC = () => {
 
     return (
         <div>
-            {loading && <Loading />}
             <h1 className="text-center text-3xl p-3">Travel Planner</h1>
 
             <div className="p-6">

@@ -27,8 +27,8 @@ model PlanItem {
     id             Int      @id @default(autoincrement())
     date           DateTime
     transportation String?
-    place          String
-    activity       String
+    place          String?
+    activity       String?
     memo           String?
     planId         Int
     order          Int?     @default(0)

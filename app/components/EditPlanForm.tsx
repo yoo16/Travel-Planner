@@ -5,16 +5,17 @@ import axios from 'axios';
 import Loading from './Loading';
 import { dateToString } from '@/app/services/Date';
 import { useRouter } from 'next/navigation';
+import { useLoading } from '@/app/context/LoadingContext';
 
 interface EditPlanProps {
     editingPlan: Plan,
 }
 
 const EditPlanForm: React.FC<EditPlanProps> = ({ editingPlan }) => {
+    const { setLoading } = useLoading();
     const router = useRouter();
 
     const [plan, setPlan] = useState<Plan>(editingPlan);
-    const [loading, setLoading] = useState(false);
 
     if (!editingPlan) return;
 
@@ -82,7 +83,6 @@ const EditPlanForm: React.FC<EditPlanProps> = ({ editingPlan }) => {
 
     return (
         <>
-            {loading && <Loading />}
             <div className="max-w-lg mx-auto p-6 bg-white shadow-md rounded-lg space-y-6">
                 <div className="flex flex-col">
                     <label className="mb-2 font-semibold text-lg">出発地 - 目的地:</label>

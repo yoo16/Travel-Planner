@@ -10,7 +10,12 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
         const plan = await prisma.plan.findFirst({
             where: { id: parseInt(id) },
             include: {
-                planItems: true,
+                planItems: {
+                    orderBy: [
+                        { date: 'asc' },
+                        { order: 'asc' },
+                    ],
+                },
             },
         });
 
@@ -18,7 +23,6 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
             return NextResponse.json({ error: 'Plan not found' }, { status: 404 });
         }
 
-        // planItems を日付ごとにグループ化
         const groupedItems = plan.planItems.reduce((groups: Record<string, any[]>, item) => {
             const dateKey = item.date.toISOString().split('T')[0];
             if (!groups[dateKey]) {

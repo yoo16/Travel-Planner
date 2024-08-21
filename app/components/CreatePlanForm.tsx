@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Loading from './Loading';
 import { dateToString } from '@/app/services/Date';
 import axios from 'axios';
+import { useLoading } from '@/app/context/LoadingContext';
 
 interface CreatePlanFormProps {
     onSave: (plan: Plan) => void;
@@ -20,8 +21,9 @@ const initPlan: Plan = {
 }
 
 const CreatePlanForm: React.FC<CreatePlanFormProps> = ({ onSave, onClose }) => {
+    const { setLoading } = useLoading();
+
     const [plan, setPlan] = useState<Plan>(initPlan);
-    const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
     const validate = () => {
@@ -80,7 +82,6 @@ const CreatePlanForm: React.FC<CreatePlanFormProps> = ({ onSave, onClose }) => {
 
     return (
         <>
-            {loading && <Loading />}
             <div className="max-w-lg mx-auto p-6 bg-white shadow-md rounded-lg space-y-6">
                 <div className="flex flex-col">
                     <label className="mb-2 font-semibold text-lg">出発地 - 目的地:</label>

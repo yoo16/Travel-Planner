@@ -6,4 +6,5 @@ interface PlanItem {
     activity: string;
     memo: string;
     planId: number;
+    order?: number;
 }

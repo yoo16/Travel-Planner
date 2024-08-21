@@ -3,16 +3,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, } from 'next/navigation';
 import axios from 'axios';
-import PlanItemForm from '@/app/components/PlanItemForm';
 import Link from 'next/link';
 import PlanItemList from '@/app/components/PlanItemList';
-import Loading from '@/app/components/Loading';
 import { dateToString } from '@/app/services/Date';
+import { useLoading } from '@/app/context/LoadingContext';
 
 const PlanDetailPage: React.FC = () => {
+    const { setLoading } = useLoading();
     const { id } = useParams();
 
-    const [loading, setLoading] = useState(false);
     const [plan, setPlan] = useState<Plan>();
     const [planItems, setPlanItems] = useState<PlanItem[][]>([]);
 
@@ -54,7 +53,6 @@ const PlanDetailPage: React.FC = () => {
 
     return (
         <div>
-            {loading && <Loading />}
             {plan &&
                 <div className="m-3">
                     <h1 className="text-center text-3xl py-3">Travel Planner</h1>

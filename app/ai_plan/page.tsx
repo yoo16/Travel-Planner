@@ -4,13 +4,15 @@ import React, { useState, useRef } from 'react';
 import AiPlanForm from '@/app/components/AiPlanForm';
 import AiPlanList from '@/app/components/AiPlanList';
 import axios from 'axios';
-import Loading from '../components/Loading';
+import Loading from '@/app/components/Loading';
+import { useLoading } from '@/app/context/LoadingContext';
 
 const Home: React.FC = () => {
+    const { setLoading } = useLoading();
+    const planListRef = useRef<HTMLDivElement>(null);
+    
     const [plan, setPlan] = useState<Plan | null>(null);
     const [planItems, setPlanItems] = useState<PlanItem[][]>();
-    const [loading, setLoading] = useState(false);
-    const planListRef = useRef<HTMLDivElement>(null);
 
     const onAiCreate = async (plan: Plan) => {
         try {
@@ -51,7 +53,6 @@ const Home: React.FC = () => {
 
     return (
         <div className="pb-20">
-            {loading && <Loading />}
             <h1 className="text-center text-3xl p-3">AI Planner</h1>
             <AiPlanForm onAiCreate={onAiCreate} />
             <div ref={planListRef}>
