@@ -5,6 +5,7 @@ import PlanItemForm from '@/app/components/PlanItemForm';
 import PlanItemDisplay from './PlanItemDisplay';
 import { dateList } from '../services/Date';
 import Link from 'next/link';
+import axios from 'axios';
 
 interface PlanItemListProps {
     plan: Plan;
@@ -13,6 +14,31 @@ interface PlanItemListProps {
 
 const PlanItemList: React.FC<PlanItemListProps> = ({ plan, planItems }) => {
     const [editingItem, setEditingItem] = useState<PlanItem | null>(null);
+
+    const onAdd = async (e: React.MouseEvent, dateOption: string) => {
+        e.preventDefault();
+        if (typeof plan?.id === 'undefined') return;
+
+        try {
+            const newPlanItem: PlanItem = {
+                planId: plan.id,
+                date: new Date(dateOption),
+                transportation: '',
+                place: '',
+                activity: '',
+                memo: ''
+            };
+            const uri = `/api/plan_item/add`;
+            const response = await axios.post(uri, newPlanItem);
+
+            if (response.status === 200) {
+                console.log('PlanItem added:', response.data);
+                setEditingItem(response.data);
+            }
+        } catch (error) {
+            console.error('Error saving plan item:', error);
+        }
+    };
 
     const onEdit = (planItem: PlanItem) => {
         setEditingItem(planItem);
@@ -24,11 +50,12 @@ const PlanItemList: React.FC<PlanItemListProps> = ({ plan, planItems }) => {
 
     const onUpdate = (updatedItem: PlanItem) => {
         setEditingItem(null);
+        // 更新後の処理を追加
     };
 
     const onDelete = () => {
         setEditingItem(null);
-        planItems = [];
+        // 削除後の処理を追加
     };
 
     return (
@@ -43,6 +70,7 @@ const PlanItemList: React.FC<PlanItemListProps> = ({ plan, planItems }) => {
                         <div className="my-2">
                             <Link
                                 href="#"
+                                onClick={(e) => onAdd(e, dateOption)}
                                 className="me-2 py-1 px-4 bg-yellow-500 text-white rounded-md"
                             >
                                 Add

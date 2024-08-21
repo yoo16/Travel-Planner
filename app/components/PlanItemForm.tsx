@@ -42,7 +42,6 @@ const PlanItemForm: React.FC<PlanItemFormProps> = ({ plan, planItem, onSubmit, o
         }));
     };
 
-
     const onUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
         if (typeof plan?.id === 'undefined') return;
