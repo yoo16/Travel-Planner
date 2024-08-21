@@ -6,9 +6,10 @@ const prisma = new PrismaClient();
 export async function GET(req: NextRequest) {
     try {
         const plans = await prisma.plan.findMany({
-            orderBy: {
-                createdAt: 'desc',
-            }
+            orderBy: [
+                { updatedAt: 'desc' },
+                { createdAt: 'desc' },
+            ]
         });
         return NextResponse.json(plans, { status: 200 });
     } catch (error) {

@@ -30,7 +30,7 @@ const Home: React.FC = () => {
         }
     };
 
-    const handleSavePlan = async () => {
+    const onSave = async () => {
         if (!plan || !planItems) return;
 
         try {
@@ -60,7 +60,7 @@ const Home: React.FC = () => {
                     <div className="fixed bottom-0 left-0 right-0 bg-white shadow-lg py-4">
                         <div className="text-center">
                             <button
-                                onClick={handleSavePlan}
+                                onClick={onSave}
                                 className="py-2 px-4 bg-green-500 text-white font-semibold rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
                             >
                                 Save

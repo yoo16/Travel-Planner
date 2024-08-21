@@ -1,17 +1,16 @@
 'use client'
 
-import React, { useState, useEffect } from 'react';
-import { useRouter, useParams } from 'next/navigation';
-import axios from 'axios';
+import React, { useState } from 'react';
 import Loading from './Loading';
 import { dateToString } from '@/app/services/Date';
+import axios from 'axios';
 
 interface CreatePlanFormProps {
     onSave: (plan: Plan) => void;
     onClose: () => void;
 }
 
-const initPlan:Plan = {
+const initPlan: Plan = {
     departure: '',
     destination: '',
     departureDate: new Date(),
@@ -23,6 +22,18 @@ const initPlan:Plan = {
 const CreatePlanForm: React.FC<CreatePlanFormProps> = ({ onSave, onClose }) => {
     const [plan, setPlan] = useState<Plan>(initPlan);
     const [loading, setLoading] = useState(false);
+    const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+    const validate = () => {
+        const newErrors: { [key: string]: string } = {};
+
+        if (!plan.departure) newErrors.departure = '出発地は必須です。';
+        if (!plan.destination) newErrors.destination = '目的地は必須です。';
+        if (!plan.departureDate) newErrors.departureDate = '出発日は必須です。';
+        if (!plan.arrivalDate) newErrors.arrivalDate = '到着日は必須です。';
+
+        return newErrors;
+    };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -30,17 +41,15 @@ const CreatePlanForm: React.FC<CreatePlanFormProps> = ({ onSave, onClose }) => {
             ...prevPlan,
             [name]: value
         }));
-        console.log(plan)
     };
 
     const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        
+
         setPlan(prevPlan => ({
             ...prevPlan,
             [name]: new Date(value).toISOString()
         }));
-        console.log(plan)
     };
 
     const handleBudgetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,6 +60,12 @@ const CreatePlanForm: React.FC<CreatePlanFormProps> = ({ onSave, onClose }) => {
     };
 
     const handleSave = async () => {
+        const validationErrors = validate();
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            return;
+        }
+
         try {
             setLoading(true);
             const uri = `/api/plan/save`;
@@ -70,39 +85,59 @@ const CreatePlanForm: React.FC<CreatePlanFormProps> = ({ onSave, onClose }) => {
                 <div className="flex flex-col">
                     <label className="mb-2 font-semibold text-lg">出発地 - 目的地:</label>
                     <div className="flex">
-                        <input
-                            type="text"
-                            name="departure"
-                            value={plan.departure}
-                            onChange={handleInputChange}
-                            className="me-2 w-1/2 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                        <input
-                            type="text"
-                            name="destination"
-                            value={plan.destination}
-                            onChange={handleInputChange}
-                            className="w-1/2 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
-                        />
+                        <div className="w-1/2">
+                            <input
+                                type="text"
+                                name="departure"
+                                value={plan.departure}
+                                onChange={handleInputChange}
+                                className="me-2 w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                            {errors.departure && (
+                                <p className="text-red-500 text-xs mt-1">{errors.departure}</p>
+                            )}
+                        </div>
+                        <div className="w-1/2">
+                            <input
+                                type="text"
+                                name="destination"
+                                value={plan.destination}
+                                onChange={handleInputChange}
+                                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
+                            />
+                            {errors.destination && (
+                                <p className="text-red-500 text-xs mt-1">{errors.destination}</p>
+                            )}
+                        </div>
                     </div>
                 </div>
                 <div className="flex flex-col">
                     <label className="mb-2 font-semibold text-lg">出発日 - 到着日:</label>
                     <div className="flex">
-                        <input
-                            type="date"
-                            name="departureDate"
-                            value={dateToString(plan.departureDate)}
-                            onChange={handleDateChange}
-                            className="w-1/2 me-2 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                        <input
-                            type="date"
-                            name="arrivalDate"
-                            value={dateToString(plan.departureDate)}
-                            onChange={handleDateChange}
-                            className="w-1/2 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
+                        <div className="w-1/2">
+                            <input
+                                type="date"
+                                name="departureDate"
+                                value={dateToString(plan.departureDate)}
+                                onChange={handleDateChange}
+                                className="me-2 w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                            {errors.departureDate && (
+                                <p className="text-red-500 text-xs mt-1">{errors.departureDate}</p>
+                            )}
+                        </div>
+                        <div className="w-1/2">
+                            <input
+                                type="date"
+                                name="arrivalDate"
+                                value={dateToString(plan.arrivalDate)}
+                                onChange={handleDateChange}
+                                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                            {errors.arrivalDate && (
+                                <p className="text-red-500 text-xs mt-1">{errors.arrivalDate}</p>
+                            )}
+                        </div>
                     </div>
                 </div>
                 <div className="flex flex-col">
@@ -143,7 +178,7 @@ const CreatePlanForm: React.FC<CreatePlanFormProps> = ({ onSave, onClose }) => {
                         className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                 </div>
-                <div className="flex justify-center">
+                <div className="">
                     <button
                         onClick={handleSave}
                         className="me-3 py-2 px-4 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600"
