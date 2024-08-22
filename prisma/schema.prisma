@@ -30,6 +30,8 @@ model PlanItem {
     place          String?
     activity       String?
     memo           String?
+    accommodation  String?
+    budget         Int?
     planId         Int
     order          Int?     @default(0)
     createdAt      DateTime @default(now())

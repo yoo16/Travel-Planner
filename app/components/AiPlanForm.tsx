@@ -1,9 +1,10 @@
 'use client'
 
 import React, { useState } from 'react';
-import { dateToString } from '@/app/services/Date';
-import { useLoading } from '../context/LoadingContext';
-import axios from 'axios';
+import { DateRange } from 'react-date-range';
+import 'react-date-range/dist/styles.css';
+import 'react-date-range/dist/theme/default.css';
+import { ja } from 'date-fns/locale';
 
 interface TravelFormProps {
     onAiCreate: (plan: Plan) => void;
@@ -21,22 +22,29 @@ const initPlan: Plan = {
 }
 
 const AiPlanForm: React.FC<TravelFormProps> = ({ onAiCreate, onCancel, editPlan }) => {
-    const { setLoading } = useLoading();
     const [plan, setPlan] = useState<Plan>(editPlan ? editPlan : initPlan);
+    const [range, setRange] = useState([
+        {
+            startDate: new Date(plan.departureDate),
+            endDate: new Date(plan.arrivalDate),
+            key: 'selection',
+        },
+    ]);
+
+    const handleSelect = (ranges: any) => {
+        setRange([ranges.selection]);
+        setPlan(prevPlan => ({
+            ...prevPlan,
+            departureDate: ranges.selection.startDate,
+            arrivalDate: ranges.selection.endDate,
+        }));
+    };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setPlan(prevPlan => ({
             ...prevPlan,
             [name]: value
-        }));
-    };
-
-    const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setPlan(prevPlan => ({
-            ...prevPlan,
-            [name]: new Date(value).toISOString()
         }));
     };
 
@@ -57,7 +65,6 @@ const AiPlanForm: React.FC<TravelFormProps> = ({ onAiCreate, onCancel, editPlan 
 
     return (
         <div className="max-w-lg mx-auto p-6 bg-white shadow-md rounded-lg space-y-6">
-
             <div className="flex flex-col">
                 <label className="mb-2 font-semibold text-lg">出発地 - 目的地:</label>
                 <div className="flex">
@@ -79,22 +86,14 @@ const AiPlanForm: React.FC<TravelFormProps> = ({ onAiCreate, onCancel, editPlan 
             </div>
             <div className="flex flex-col">
                 <label className="mb-2 font-semibold text-lg">出発日 - 到着日:</label>
-                <div className="flex">
-                    <input
-                        type="date"
-                        name="departureDate"
-                        value={dateToString(plan.departureDate)}
-                        onChange={handleDateChange}
-                        className="w-1/2 me-2 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    <input
-                        type="date"
-                        name="arrivalDate"
-                        value={dateToString(plan.arrivalDate)}
-                        onChange={handleDateChange}
-                        className="w-1/2 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                </div>
+                <DateRange
+                    ranges={range}
+                    onChange={handleSelect}
+                    moveRangeOnFirstSelection={false}
+                    rangeColors={['#3b82f6']}
+                    locale={ja}
+                    editableDateInputs={true}
+                />
             </div>
             <div className="flex flex-col">
                 <label className="mb-2 font-semibold text-lg">

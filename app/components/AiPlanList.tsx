@@ -40,32 +40,46 @@ const AiPlanList: React.FC<AiPlanListProps> = ({ plan, planItems, onSave }) => {
                         {new Date(dayPlans[0].date).toLocaleDateString()} - {dayIndex + 1}日目 -
                     </h2>
                     <div className="space-y-4">
-                        {dayPlans.map((plan, index) => (
+                        {dayPlans.map((planItem, index) => (
                             <div key={index} className="bg-gray-100 p-3 rounded-lg shadow">
                                 <div className="text-gray-700 my-4">
                                     <span className="text-xs font-semibold rounded p-2 mx-2  bg-green-500 text-white">
                                         アクティビティ
                                     </span>
-                                    {plan.activity}
+                                    {planItem.activity}
                                 </div>
 
                                 <div className="text-gray-700 my-4">
                                     <span className="text-xs font-semibold rounded p-2 mx-2  bg-green-500 text-white">
                                         場所
                                     </span>
-                                    {plan.place}
-                                    {plan.transportation && (
+                                    {planItem.place}
+                                    {planItem.transportation && (
                                         <>
                                             <span className="text-xs font-semibold rounded p-2 mx-2  bg-green-500 text-white">
                                                 移動
                                             </span>
-                                            {plan.transportation}
+                                            {planItem.transportation}
                                         </>
                                     )}
                                 </div>
 
+                                <div className="text-gray-700 my-4">
+                                    <>
+                                        <span className="text-xs font-semibold rounded p-2 mx-2  bg-green-500 text-white">
+                                            宿泊先
+                                        </span>
+                                        {planItem.accommodation}
+                                    </>
+                                    <span className="text-xs font-semibold rounded p-2 mx-2  bg-green-500 text-white">
+                                        予算
+                                    </span>
+                                    {plan.budget?.toLocaleString()}
+                                    <span className="px-1">円</span>
+                                </div>
+
                                 <div className="text-gray-700 mx-2">
-                                    {plan.memo}
+                                    {planItem.memo}
                                 </div>
                             </div>
                         ))}

@@ -183,6 +183,29 @@ const PlanItemForm: React.FC<PlanItemFormProps> = ({ plan, planItem, onSubmit, o
                 </div>
 
                 <div className="flex flex-col">
+                    <label className="text-sm font-semibold text-gray-600 mb-1">宿泊先</label>
+                    <input
+                        type="text"
+                        name="accommodation"
+                        value={editPlanItem.accommodation}
+                        onChange={handleInputChange}
+                        className="p-2 border border-gray-300 rounded-md"
+                    />
+                </div>
+
+
+                <div className="flex flex-col">
+                    <label className="text-sm font-semibold text-gray-600 mb-1">予算</label>
+                    <input
+                        type="text"
+                        name="budget"
+                        value={editPlanItem.budget}
+                        onChange={handleInputChange}
+                        className="p-2 border border-gray-300 rounded-md"
+                    />
+                </div>
+
+                <div className="flex flex-col">
                     <label className="text-sm font-semibold text-gray-600 mb-1">Memo</label>
                     <textarea
                         name="memo"

@@ -169,7 +169,6 @@ const PlanItemList: React.FC<PlanItemListProps> = ({ plan, initialPlanItems }) =
                                                 {...provided.draggableProps}
                                                 {...provided.dragHandleProps}
                                             >
-                                                {/* ドラッグ可能なアイテムの表示 */}
                                                 {editingItem && planItem.id === editingItem.id ? (
                                                     <PlanItemForm
                                                         plan={plan}

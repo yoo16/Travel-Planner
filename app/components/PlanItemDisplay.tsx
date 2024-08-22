@@ -27,6 +27,22 @@ const PlanItemDisplay: React.FC<PlanItemDisplayProps> = ({ planItem, onEdit }) =
                 )}
             </div>
 
+            <div className="text-gray-700 my-4">
+                {planItem.accommodation &&
+                    <>
+                        <span className="text-xs font-semibold rounded p-2 mx-2  bg-green-500 text-white">
+                            宿泊先
+                        </span>
+                        {planItem.accommodation}
+                    </>
+                }
+                <span className="text-xs font-semibold rounded p-2 mx-2  bg-green-500 text-white">
+                    予算
+                </span>
+                {planItem.budget?.toLocaleString()}
+                <span className="px-1">円</span>
+            </div>
+
             <div className="text-gray-700">
                 <span className="text-xs font-semibold rounded p-2 mx-2  bg-green-500 text-white">
                     Memo

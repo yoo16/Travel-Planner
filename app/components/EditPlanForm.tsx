@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import axios from 'axios';
-import Loading from './Loading';
 import { dateToString } from '@/app/services/Date';
 import { useRouter } from 'next/navigation';
 import { useLoading } from '@/app/context/LoadingContext';

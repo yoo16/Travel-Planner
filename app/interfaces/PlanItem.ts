@@ -5,6 +5,8 @@ interface PlanItem {
     place: string;
     activity: string;
     memo: string;
+    accommodation?: string;
+    budget?: number;
     planId: number;
     order?: number;
 }
