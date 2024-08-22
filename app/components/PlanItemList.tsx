@@ -35,7 +35,7 @@ const PlanItemList: React.FC<PlanItemListProps> = ({ plan, initialPlanItems }) =
         }
     };
 
-    const onAdd = async (e: React.MouseEvent, dateOption: string) => {
+    const onAdd = async (e: React.MouseEvent, date: Date) => {
         e.preventDefault();
         if (typeof plan?.id === 'undefined') return;
 
@@ -43,7 +43,7 @@ const PlanItemList: React.FC<PlanItemListProps> = ({ plan, initialPlanItems }) =
             setLoading(true);
             const newPlanItem: PlanItem = {
                 planId: plan.id,
-                date: new Date(dateOption),
+                date: date,
                 transportation: '',
                 place: '',
                 activity: '',
@@ -123,15 +123,15 @@ const PlanItemList: React.FC<PlanItemListProps> = ({ plan, initialPlanItems }) =
 
     return (
         <div>
-            {dateList(plan.departureDate, plan.arrivalDate).map((dateOption, dayIndex) => (
+            {planItems.map((dayPlanItems, dayIndex) => (
                 <div key={dayIndex} className="border-b py-6">
                     <h2 className="text-2xl font-bold text-gray-600 mb-6">
-                        {new Date(dateOption).toLocaleDateString()} - {dayIndex + 1}日目 -
+                        {new Date(dayPlanItems[0].date).toLocaleDateString()} - {dayIndex + 1}日目 -
                     </h2>
 
                     <div className="my-2">
                         <button
-                            onClick={(e) => onAdd(e, dateOption)}
+                            onClick={(e) => onAdd(e, dayPlanItems[0].date)}
                             className="me-2 py-1 px-4 text-sm bg-yellow-500 text-white rounded-md"
                         >
                             Add
@@ -146,7 +146,7 @@ const PlanItemList: React.FC<PlanItemListProps> = ({ plan, initialPlanItems }) =
                                     ref={provided.innerRef}
                                     className="space-y-4"
                                 >
-                                    {planItems[dayIndex] && planItems[dayIndex].map((planItem, planItemIndex) => (
+                                    {dayPlanItems.map((planItem, planItemIndex) => (
                                         <Draggable key={planItem.id} draggableId={`${planItem.id}`} index={planItemIndex}>
                                             {(provided) => (
                                                 <div
