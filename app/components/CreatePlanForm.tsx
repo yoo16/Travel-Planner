@@ -7,7 +7,7 @@ import axios from 'axios';
 import { useLoading } from '@/app/context/LoadingContext';
 
 interface CreatePlanFormProps {
-    onSave: (plan: Plan) => void;
+    onCreate: (plan: Plan) => void;
     onClose: () => void;
 }
 
@@ -20,7 +20,7 @@ const initPlan: Plan = {
     keyword: '',
 }
 
-const CreatePlanForm: React.FC<CreatePlanFormProps> = ({ onSave, onClose }) => {
+const CreatePlanForm: React.FC<CreatePlanFormProps> = ({ onCreate, onClose }) => {
     const { setLoading } = useLoading();
 
     const [plan, setPlan] = useState<Plan>(initPlan);
@@ -72,7 +72,7 @@ const CreatePlanForm: React.FC<CreatePlanFormProps> = ({ onSave, onClose }) => {
             setLoading(true);
             const uri = `/api/plan/save`;
             await axios.post(uri, plan);
-            onSave(plan);
+            onCreate(plan);
         } catch (error) {
             console.error('Error saving plan:', error);
         } finally {

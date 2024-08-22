@@ -1,12 +1,40 @@
 import React from 'react';
+import { useLoading } from '../context/LoadingContext';
+import axios from 'axios';
+import { useRouter } from 'next/navigation';
 
 interface AiPlanListProps {
+    plan: Plan;
     planItems: PlanItem[][];
+    onSave: () => void;
 }
 
-const AiPlanList: React.FC<AiPlanListProps> = ({ planItems }) => {
+const AiPlanList: React.FC<AiPlanListProps> = ({ plan, planItems, onSave }) => {
+    const router = useRouter();
+    const { setLoading } = useLoading();
+
+    const handleSave = async () => {
+        if (!plan || !planItems) return;
+        try {
+            setLoading(true);
+            const saveResponse = await axios.post('/api/ai/save',
+                {
+                    plan: plan,
+                    planItems: planItems.flat(),
+                }
+            );
+            if (saveResponse) {
+                onSave();
+            }
+        } catch (error) {
+            console.error('Error saving travel plan:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
-        <div className="m-5">
+        <>
             {planItems.map((dayPlans, dayIndex) => (
                 <div key={dayIndex} className="border-b p-6">
                     <h2 className="text-2xl font-bold text-gray-600 mb-6">
@@ -45,7 +73,17 @@ const AiPlanList: React.FC<AiPlanListProps> = ({ planItems }) => {
                     </div>
                 </div>
             ))}
-        </div>
+            <div className="fixed bottom-0 left-0 right-0 bg-white shadow-lg py-4">
+                <div className="text-center">
+                    <button
+                        onClick={handleSave}
+                        className="py-2 px-4 bg-green-500 text-white font-semibold rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                    >
+                        Save
+                    </button>
+                </div>
+            </div>
+        </>
     );
 };
 

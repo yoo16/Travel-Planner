@@ -2,13 +2,16 @@
 
 import React, { useState } from 'react';
 import { dateToString } from '@/app/services/Date';
+import { useLoading } from '../context/LoadingContext';
+import axios from 'axios';
 
 interface TravelFormProps {
     onAiCreate: (plan: Plan) => void;
+    onCancel: () => void;
     editPlan?: Plan,
 }
 
-const initPlan:Plan = {
+const initPlan: Plan = {
     departure: '',
     destination: '',
     departureDate: new Date(),
@@ -17,9 +20,10 @@ const initPlan:Plan = {
     keyword: '',
 }
 
-const AiPlanForm: React.FC<TravelFormProps> = ({ onAiCreate, editPlan }) => {
+const AiPlanForm: React.FC<TravelFormProps> = ({ onAiCreate, onCancel, editPlan }) => {
+    const { setLoading } = useLoading();
     const [plan, setPlan] = useState<Plan>(editPlan ? editPlan : initPlan);
-    
+
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setPlan(prevPlan => ({
@@ -30,7 +34,6 @@ const AiPlanForm: React.FC<TravelFormProps> = ({ onAiCreate, editPlan }) => {
 
     const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-
         setPlan(prevPlan => ({
             ...prevPlan,
             [name]: new Date(value).toISOString()
@@ -44,10 +47,12 @@ const AiPlanForm: React.FC<TravelFormProps> = ({ onAiCreate, editPlan }) => {
         }));
     };
 
-    
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleAiCreate = async () => {
         onAiCreate(plan);
+    };
+
+    const handleCancel = async () => {
+        onCancel();
     };
 
     return (
@@ -129,9 +134,15 @@ const AiPlanForm: React.FC<TravelFormProps> = ({ onAiCreate, editPlan }) => {
                     className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
             </div>
-            <button onClick={handleSubmit} type="submit" className="w-full py-2 px-4 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                AIプラン
-            </button>
+
+            <div className="flex justify-center">
+                <button onClick={handleAiCreate} type="button" className="mx-1 py-2 px-4 bg-blue-500 text-white rounded-md">
+                    AI Plan
+                </button>
+                <button onClick={handleCancel} type="button" className="mx-1 py-2 px-4 bg-white text-blue-500 border border-blue-500 rounded-md">
+                    Close
+                </button>
+            </div>
         </div>
     );
 };

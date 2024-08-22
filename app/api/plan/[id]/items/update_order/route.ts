@@ -4,13 +4,9 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
-    const { id } = params;
-    const { planItems } = await req.json();
-
     try {
+        const { planItems } = await req.json();
         for (var planItem of planItems) {
-            // console.log("id:", planItem.id)
-            // console.log("order:", planItem.order)
             await prisma.planItem.update({
                 where: { id: planItem.id },
                 data: { order: planItem.order },
