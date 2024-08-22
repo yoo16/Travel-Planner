@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import PlanItemForm from '@/app/components/PlanItemForm';
 import PlanItemDisplay from './PlanItemDisplay';
-import { dateList } from '../services/Date';
+import { dateList, dateToString } from '../services/Date';
 import axios from 'axios';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import { useLoading } from '../context/LoadingContext';
@@ -55,7 +55,7 @@ const PlanItemList: React.FC<PlanItemListProps> = ({ plan, initialPlanItems }) =
 
             if (planItem.id > 0) {
                 const updatedPlanItems = [...planItems];
-                const dayIndex = dateList(plan.departureDate, plan.arrivalDate).indexOf(dateOption);
+                const dayIndex = dateList(plan.departureDate, plan.arrivalDate).indexOf(dateToString(date));
 
                 if (updatedPlanItems[dayIndex]) {
                     updatedPlanItems[dayIndex] = [...updatedPlanItems[dayIndex], planItem];
@@ -95,92 +95,107 @@ const PlanItemList: React.FC<PlanItemListProps> = ({ plan, initialPlanItems }) =
 
         const sourceIndex = result.source.index;
         const destinationIndex = result.destination.index;
-        const dayIndex = parseInt(result.source.droppableId);
+        const sourceDayIndex = parseInt(result.source.droppableId);
+        const destinationDayIndex = parseInt(result.destination.droppableId);
 
         const updatedPlanItems = [...planItems];
-        const [removed] = updatedPlanItems[dayIndex].splice(sourceIndex, 1);
-        updatedPlanItems[dayIndex].splice(destinationIndex, 0, removed);
+
+        // もし日を跨いで移動する場合
+        if (sourceDayIndex !== destinationDayIndex) {
+            const [removed] = updatedPlanItems[sourceDayIndex].splice(sourceIndex, 1);
+            removed.date = new Date(plan.departureDate);
+            removed.date.setDate(new Date(plan.departureDate).getDate() + destinationDayIndex);
+            updatedPlanItems[destinationDayIndex].splice(destinationIndex, 0, removed);
+        } else {
+            const [removed] = updatedPlanItems[sourceDayIndex].splice(sourceIndex, 1);
+            updatedPlanItems[sourceDayIndex].splice(destinationIndex, 0, removed);
+        }
 
         setPlanItems(updatedPlanItems);
-
-        const reorderdPlanItems = updatedPlanItems[dayIndex].map((item, index) => ({
-            ...item,
-            order: index + 1,
-        }));
-        console.log(reorderdPlanItems);
 
         try {
             setLoading(true);
             await axios.post(`/api/plan/${plan.id}/items/update_order`, {
-                planItems: reorderdPlanItems,
+                planItems: updatedPlanItems.map((dayItems, dayIndex) => {
+                    return dayItems.map((item, index) => ({
+                        ...item,
+                        order: index + 1,
+                        date: new Date(plan.departureDate).setDate(new Date(plan.departureDate).getDate() + dayIndex),
+                    }));
+                }).flat(),
             });
         } catch (error) {
-
+            console.error('Error updating plan item order:', error);
         } finally {
             setLoading(false);
         }
     };
 
+
     return (
-        <div>
+        <DragDropContext onDragEnd={onDragEnd}>
             {planItems.map((dayPlanItems, dayIndex) => (
-                <div key={dayIndex} className="border-b py-6">
-                    <h2 className="text-2xl font-bold text-gray-600 mb-6">
-                        {new Date(dayPlanItems[0].date).toLocaleDateString()} - {dayIndex + 1}日目 -
-                    </h2>
+                <div key={dayIndex}>
+                    <div className="mt-6">
+                        <h2 className="text-2xl font-bold text-gray-600 mb-6">
+                            {new Date(dayPlanItems[0].date).toLocaleDateString()} - {dayIndex + 1}日目 -
+                        </h2>
 
-                    <div className="my-2">
-                        <button
-                            onClick={(e) => onAdd(e, dayPlanItems[0].date)}
-                            className="me-2 py-1 px-4 text-sm bg-yellow-500 text-white rounded-md"
-                        >
-                            Add
-                        </button>
+                        <div className="my-2">
+                            <button
+                                onClick={(e) => onAdd(e, dayPlanItems[0].date)}
+                                className="me-2 py-1 px-4 text-sm bg-yellow-500 text-white rounded-md"
+                            >
+                                Add
+                            </button>
+                        </div>
                     </div>
-
-                    <DragDropContext onDragEnd={onDragEnd}>
-                        <Droppable droppableId={`${dayIndex}`}>
-                            {(provided) => (
-                                <div
-                                    {...provided.droppableProps}
-                                    ref={provided.innerRef}
-                                    className="space-y-4"
-                                >
-                                    {dayPlanItems.map((planItem, planItemIndex) => (
-                                        <Draggable key={planItem.id} draggableId={`${planItem.id}`} index={planItemIndex}>
-                                            {(provided) => (
-                                                <div
-                                                    ref={provided.innerRef}
-                                                    {...provided.draggableProps}
-                                                    {...provided.dragHandleProps}
-                                                >
-                                                    {editingItem && planItem.id === editingItem.id ? (
-                                                        <PlanItemForm
-                                                            plan={plan}
-                                                            planItem={planItem}
-                                                            onSubmit={onUpdate}
-                                                            onDelete={onDelete}
-                                                            onClose={onCancelEdit}
-                                                        />
-                                                    ) : (
-                                                        <PlanItemDisplay
-                                                            planItem={planItem}
-                                                            onEdit={() => onEdit(planItem)}
-                                                        />
-                                                    )}
-                                                </div>
-                                            )}
-                                        </Draggable>
-                                    ))}
-                                    {provided.placeholder}
-                                </div>
-                            )}
-                        </Droppable>
-                    </DragDropContext>
-
+                    <Droppable droppableId={`${dayIndex}`} key={dayIndex}>
+                        {(provided) => (
+                            <div
+                                {...provided.droppableProps}
+                                ref={provided.innerRef}
+                                className="space-y-4"
+                            >
+                                {dayPlanItems.map((planItem, planItemIndex) => (
+                                    <Draggable
+                                        key={planItem.id}
+                                        draggableId={`${planItem.id}`}
+                                        index={planItemIndex}
+                                    >
+                                        {(provided) => (
+                                            <div
+                                                ref={provided.innerRef}
+                                                {...provided.draggableProps}
+                                                {...provided.dragHandleProps}
+                                            >
+                                                {/* ドラッグ可能なアイテムの表示 */}
+                                                {editingItem && planItem.id === editingItem.id ? (
+                                                    <PlanItemForm
+                                                        plan={plan}
+                                                        planItem={planItem}
+                                                        onSubmit={onUpdate}
+                                                        onDelete={onDelete}
+                                                        onClose={onCancelEdit}
+                                                    />
+                                                ) : (
+                                                    <PlanItemDisplay
+                                                        planItem={planItem}
+                                                        onEdit={() => onEdit(planItem)}
+                                                    />
+                                                )}
+                                            </div>
+                                        )}
+                                    </Draggable>
+                                ))}
+                                {provided.placeholder}
+                            </div>
+                        )}
+                    </Droppable>
                 </div>
             ))}
-        </div>
+        </DragDropContext>
+
     );
 };
 

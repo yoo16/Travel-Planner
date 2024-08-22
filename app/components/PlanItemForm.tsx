@@ -21,6 +21,9 @@ const PlanItemForm: React.FC<PlanItemFormProps> = ({ plan, planItem, onSubmit, o
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [transportationSuggestions, setTransportationSuggestions] = useState<string[]>([]);
 
+    const dateOptions = dateList(plan.departureDate, plan.arrivalDate);
+    console.log("dateOptions:", dateOptions);
+
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setEditPlanItem(prevPlanItem => ({
@@ -112,7 +115,7 @@ const PlanItemForm: React.FC<PlanItemFormProps> = ({ plan, planItem, onSubmit, o
                             className="p-2 border border-gray-300 rounded-md"
                             required
                         >
-                            {dateList(plan.departureDate, plan.arrivalDate).map((dateOption) => (
+                            {dateOptions.map((dateOption) => (
                                 <option key={dateOption} value={dateOption}>
                                     {new Date(dateOption).toLocaleDateString()}
                                 </option>
