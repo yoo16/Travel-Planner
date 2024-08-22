@@ -46,14 +46,6 @@ const Home: React.FC = () => {
 
                             <div className="flex">
                                 <div>
-                                    <Link
-                                        href={`plan/${plan.id}/edit`}
-                                        className="me-2 py-1 px-4 bg-yellow-500 text-white rounded-md"
-                                    >
-                                        Edit
-                                    </Link>
-                                </div>
-                                <div>
                                     <Link href={`/plan/${plan.id}`}
                                         className="me-2 py-1 px-4 bg-blue-500 text-white rounded-md"
                                     >

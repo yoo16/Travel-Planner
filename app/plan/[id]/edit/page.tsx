@@ -11,7 +11,7 @@ const PlanEditPage: React.FC = () => {
     const { id } = useParams();
     const router = useRouter();
 
-    const [plan, setPlan] = useState<Plan | null>(null);
+    const [plan, setPlan] = useState<Plan>();
 
     const fetchPlan = useCallback(async () => {
         if (!id) return;
@@ -24,19 +24,11 @@ const PlanEditPage: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    }, [id]);
+    }, [id, setLoading]);
 
     useEffect(() => {
         fetchPlan();
     }, [fetchPlan]);
-
-    const onUpdate = () => {
-        router.push('/');
-    };
-
-    const onCancel = () => {
-        router.push('/');
-    };
 
     return (
         <div>

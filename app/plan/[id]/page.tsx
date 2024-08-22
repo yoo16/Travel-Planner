@@ -40,6 +40,12 @@ const PlanDetailPage: React.FC = () => {
         <div className="m-6">
             <h1 className="text-center text-3xl py-3">Travel Planner</h1>
             <div>
+                <Link
+                    href={`/plan/${plan.id}/edit`}
+                    className="me-2 py-1 px-4 bg-yellow-500 text-white rounded-md"
+                >
+                    Edit
+                </Link>
                 <Link href="/"
                     className="me-2 py-1 px-4 border border-blue-500 text-blue-500 rounded-md"
                 >

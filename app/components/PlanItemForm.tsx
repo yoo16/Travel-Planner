@@ -121,7 +121,7 @@ const PlanItemForm: React.FC<PlanItemFormProps> = ({ plan, planItem, onSubmit, o
                     </div>
 
                     <div className="flex flex-col">
-                        <label className="text-sm font-semibold text-gray-600 mb-1">交通</label>
+                        <label className="text-sm font-semibold text-gray-600 mb-1">移動</label>
                         <div className="flex items-center">
                             <input
                                 type="text"
@@ -129,7 +129,7 @@ const PlanItemForm: React.FC<PlanItemFormProps> = ({ plan, planItem, onSubmit, o
                                 value={editPlanItem.transportation}
                                 onChange={handleTransportationChange}
                                 className="p-2 flex-grow border border-gray-300 rounded-md"
-                                placeholder="交通手段を入力"
+                                placeholder="移動手段を入力"
                             />
                             <button
                                 type="button"

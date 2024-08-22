@@ -20,7 +20,7 @@ const PlanItemDisplay: React.FC<PlanItemDisplayProps> = ({ planItem, onEdit }) =
                 {planItem.transportation && (
                     <>
                         <span className="text-xs font-semibold rounded p-2 mx-2  bg-green-500 text-white">
-                            交通
+                            移動
                         </span>
                         {planItem.transportation}
                     </>
