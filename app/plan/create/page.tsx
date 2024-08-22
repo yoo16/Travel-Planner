@@ -18,9 +18,10 @@ const PlanCreatePage: React.FC = () => {
     const onAiCreate = async (plan: Plan) => {
         try {
             setLoading(true);
-
             const response = await axios.post('/api/ai/create', plan);
-            const planItems = response.data.itemPlans;
+            console.log(response.data)
+
+            const planItems = response.data.planItems;
             setPlanItems(planItems);
             setPlan(plan);
         } catch (error) {

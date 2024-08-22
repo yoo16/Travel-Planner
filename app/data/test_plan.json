@@ -1,96 +1,110 @@
 {
-    "destination": "日光",
-    "departureDate": "2024-08-12T00:00:00.000Z",
-    "arrivalDate": "2024-08-14T00:00:00.000Z",
-    "itemPlans": [
+    "departure": "東京",
+    "destination": "札幌",
+    "departureDate": "2024-03-01",
+    "arrivalDate": "2024-03-05",
+    "budget": "50000",
+    "keyword": "観光",
+    "planItems": [
         [
             {
-                "date": "2024-08-12T00:00:00.000Z",
+                "date": "2024-03-01",
                 "transportation": "新幹線",
                 "place": "東京駅",
-                "activity": "日光線に乗り換え",
-                "memo": "東京駅から日光駅まで約2時間"
+                "activity": "到着",
+                "memo": "ホテルにチェックイン"
             },
             {
-                "date": "2024-08-12T00:00:00.000Z",
-                "transportation": "バス",
-                "place": "日光駅",
-                "activity": "東照宮へ移動",
-                "memo": "日光駅から東照宮まではバスで約15分"
-            },
-            {
-                "date": "2024-08-12T00:00:00.000Z",
-                "transportation": "",
-                "place": "東照宮",
-                "activity": "参拝",
-                "memo": "日光東照宮は、徳川家康を祀る神社。華麗な彫刻や装飾が見どころ。"
-            },
-            {
-                "date": "2024-08-12T00:00:00.000Z",
+                "date": "2024-03-01",
                 "transportation": "徒歩",
-                "place": "東照宮周辺",
+                "place": "東京スカイツリー",
+                "activity": "展望台",
+                "memo": "東京の景色を満喫"
+            },
+            {
+                "date": "2024-03-01",
+                "transportation": "徒歩",
+                "place": "浅草寺",
+                "activity": "参拝",
+                "memo": "雷門を通って仲見世通りを散策"
+            }
+        ],
+        [
+            {
+                "date": "2024-03-02",
+                "transportation": "電車",
+                "place": "上野動物園",
+                "activity": "動物鑑賞",
+                "memo": "パンダに会いに行く"
+            },
+            {
+                "date": "2024-03-02",
+                "transportation": "徒歩",
+                "place": "上野公園",
+                "activity": "散歩",
+                "memo": "桜並木を歩く"
+            },
+            {
+                "date": "2024-03-02",
+                "transportation": "電車",
+                "place": "秋葉原",
+                "activity": "買い物",
+                "memo": "電気街で買い物を楽しむ"
+            }
+        ],
+        [
+            {
+                "date": "2024-03-03",
+                "transportation": "電車",
+                "place": "渋谷",
+                "activity": "ショッピング",
+                "memo": "流行の洋服や雑貨を見る"
+            },
+            {
+                "date": "2024-03-03",
+                "transportation": "徒歩",
+                "place": "渋谷スクランブル交差点",
                 "activity": "散策",
-                "memo": "東照宮周辺には、神橋や輪王寺など、見どころがたくさん。"
+                "memo": "スクランブル交差点を渡る"
             },
             {
-                "date": "2024-08-12T00:00:00.000Z",
-                "transportation": "バス",
-                "place": "日光駅周辺",
-                "activity": "ホテルへチェックイン",
-                "memo": "日光駅周辺には、温泉旅館やホテルが多数。"
-            },
-            {
-                "date": "2024-08-12T00:00:00.000Z",
-                "transportation": "",
-                "place": "ホテル",
-                "activity": "夕食",
-                "memo": "日光名物の湯葉料理や蕎麦など、美味しいものを堪能。"
+                "date": "2024-03-03",
+                "transportation": "電車",
+                "place": "新宿",
+                "activity": "ディナー",
+                "memo": "新宿ゴールデン街で食事"
             }
         ],
         [
             {
-                "date": "2024-08-12T00:00:00.000Z",
-                "transportation": "バス",
-                "place": "ホテル",
-                "activity": "中禅寺湖へ移動",
-                "memo": "ホテルから中禅寺湖まではバスで約1時間"
+                "date": "2024-03-04",
+                "transportation": "電車",
+                "place": "築地市場",
+                "activity": "市場見学",
+                "memo": "新鮮な魚介類を食べる"
             },
             {
-                "date": "2024-08-12T00:00:00.000Z",
-                "transportation": "",
-                "place": "中禅寺湖",
-                "activity": "遊覧船に乗船",
-                "memo": "中禅寺湖は、雄大な自然に囲まれた美しい湖。遊覧船で湖を一周。"
+                "date": "2024-03-04",
+                "transportation": "電車",
+                "place": "皇居",
+                "activity": "散策",
+                "memo": "皇居東御苑を歩く"
             },
             {
-                "date": "2024-08-13T00:00:00.000Z",
-                "transportation": "",
-                "place": "華厳の滝",
-                "activity": "見学",
-                "memo": "華厳の滝は、中禅寺湖から流れ落ちる高さ97メートルの滝。迫力満点。"
-            },
-            {
-                "date": "2024-08-13T00:00:00.000Z",
-                "transportation": "バス",
-                "place": "日光駅周辺",
-                "activity": "日光の街を散策",
-                "memo": "日光駅周辺には、お土産屋さんやカフェなどがある。"
-            },
-            {
-                "date": "2024-08-13T00:00:00.000Z",
-                "transportation": "",
-                "place": "レストラン",
-                "activity": "夕食",
-                "memo": "日光名物のもみじの天ぷらなど、美味しいものを堪能。"
+                "date": "2024-03-04",
+                "transportation": "電車",
+                "place": "銀座",
+                "activity": "買い物",
+                "memo": "高級ブランドショップを巡る"
             }
         ],
         [
             {
-                "date": "2024-08-14T00:00:00.000Z",
+                "date": "2024-03-05",
                 "transportation": "新幹線",
-                "place": "日光駅",
-                "activity": "東京駅へ",
-                "memo": "日光駅から東京駅まで約2時間"
+                "place": "東京駅",
+                "activity": "出発",
+                "memo": "お土産を買って帰路につく"
             }
         ]
     ]

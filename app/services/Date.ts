@@ -7,9 +7,14 @@ export function dateList(startDate: Date, endDate: Date): string[] {
     const end = new Date(endDate);
     const dateList: string[] = [];
 
+    start.setUTCHours(0, 0, 0, 0);
+    end.setUTCHours(0, 0, 0, 0);
     while (start <= end) {
-        dateList.push(start.toISOString().split('T')[0]);
+        dateList.push(dateToString(start));
         start.setDate(start.getDate() + 1);
     }
+    console.log(start)
+    console.log(end)
+    console.log(dateList)
     return dateList;
 }

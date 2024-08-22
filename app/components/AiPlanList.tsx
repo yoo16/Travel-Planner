@@ -10,7 +10,6 @@ interface AiPlanListProps {
 }
 
 const AiPlanList: React.FC<AiPlanListProps> = ({ plan, planItems, onSave }) => {
-    const router = useRouter();
     const { setLoading } = useLoading();
 
     const handleSave = async () => {
@@ -45,7 +44,7 @@ const AiPlanList: React.FC<AiPlanListProps> = ({ plan, planItems, onSave }) => {
                             <div key={index} className="bg-gray-100 p-3 rounded-lg shadow">
                                 <div className="text-gray-700 my-4">
                                     <span className="text-xs font-semibold rounded p-2 mx-2  bg-green-500 text-white">
-                                        行動
+                                        アクティビティ
                                     </span>
                                     {plan.activity}
                                 </div>

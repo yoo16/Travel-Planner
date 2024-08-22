@@ -31,12 +31,11 @@ export async function CreatePlan(plan: Plan) {
         const prompt = createPrompt(plan);
         console.log(prompt)
 
-        // const result = await model.generateContent(prompt);
-        // const json = result.response.text()
-        // return json;
+        const result = await model.generateContent(prompt);
+        var json = JSON.parse(result.response.text());
 
-        // Test JSON
-        const json = await getTestPlan();
+        // Test JSON;
+        // var json = await getTestPlan();
         return json;
     } catch (error) {
         return { error: 'Gemini request error.' };

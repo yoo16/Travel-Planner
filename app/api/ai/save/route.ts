@@ -10,16 +10,18 @@ export async function POST(req: NextRequest) {
         console.log("Plan: ", plan);
         console.log("Plan Items:", planItems);
 
-        // Planを保存
         const savedPlan = await prisma.plan.create({
             data: plan,
         });
 
         const savedItems = [];
         for (const planItem of planItems) {
+            const formattedDate = new Date(planItem.date);
+
             const savedItem = await prisma.planItem.create({
                 data: {
                     ...planItem,
+                    date: formattedDate,
                     planId: savedPlan.id,
                 },
             });
