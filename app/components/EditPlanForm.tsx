@@ -2,10 +2,10 @@
 
 import React, { useState } from 'react';
 import axios from 'axios';
-import { dateToString } from '@/app/services/Date';
 import { useRouter } from 'next/navigation';
 import { useLoading } from '@/app/context/LoadingContext';
-
+import { DateRange } from 'react-date-range';
+import { ja } from 'date-fns/locale';
 interface EditPlanProps {
     editingPlan: Plan,
 }
@@ -15,8 +15,28 @@ const EditPlanForm: React.FC<EditPlanProps> = ({ editingPlan }) => {
     const router = useRouter();
 
     const [plan, setPlan] = useState<Plan>(editingPlan);
+    const [range, setRange] = useState([
+        {
+            startDate: new Date(plan.departureDate),
+            endDate: new Date(plan.arrivalDate),
+            key: 'selection',
+        },
+    ]);
+    const [errors, setErrors] = useState<{ departure?: string; destination?: string }>({});
 
     if (!editingPlan) return;
+
+    const validateForm = () => {
+        const newErrors: { departure?: string; destination?: string } = {};
+        if (!plan.departure) {
+            newErrors.departure = "出発地を入力してください";
+        }
+        if (!plan.destination) {
+            newErrors.destination = "目的地を入力してください";
+        }
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -26,12 +46,12 @@ const EditPlanForm: React.FC<EditPlanProps> = ({ editingPlan }) => {
         }));
     };
 
-    const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-
+    const handleSelect = (ranges: any) => {
+        setRange([ranges.selection]);
         setPlan(prevPlan => ({
             ...prevPlan,
-            [name]: new Date(value).toISOString()
+            departureDate: ranges.selection.startDate,
+            arrivalDate: ranges.selection.endDate,
         }));
     };
 
@@ -43,6 +63,7 @@ const EditPlanForm: React.FC<EditPlanProps> = ({ editingPlan }) => {
     };
 
     const onUpdate = async () => {
+        if (!validateForm()) return;
         try {
             setLoading(true);
             const uri = `/api/plan/${plan.id}/update`;
@@ -83,48 +104,57 @@ const EditPlanForm: React.FC<EditPlanProps> = ({ editingPlan }) => {
     return (
         <>
             <div className="max-w-lg mx-auto p-6 bg-white shadow-md rounded-lg space-y-6">
-                <div className="flex flex-col">
-                    <label className="mb-2 font-semibold text-lg">出発地 - 目的地:</label>
+                <div className="">
+                    <div className="mb-3 py-1 px-2 rounded bg-green-500 text-white text-sm">
+                        出発地 - 目的地
+                    </div>
                     <div className="flex">
-                        <input
-                            type="text"
-                            name="departure"
-                            value={plan.departure}
-                            onChange={handleInputChange}
-                            className="me-2 w-1/2 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                        <input
-                            type="text"
-                            name="destination"
-                            value={plan.destination}
-                            onChange={handleInputChange}
-                            className="w-1/2 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
-                        />
+                        <div className="w-1/2 me-2">
+                            <input
+                                type="text"
+                                name="departure"
+                                value={plan.departure}
+                                onChange={handleInputChange}
+                                className={`p-2 w-full border ${errors.departure ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                            />
+                            {errors.departure && (
+                                <p className="text-red-500 text-sm mt-1">{errors.departure}</p>
+                            )}
+                        </div>
+                        <div className="w-1/2">
+                            <input
+                                type="text"
+                                name="destination"
+                                value={plan.destination}
+                                onChange={handleInputChange}
+                                className={`p-2 w-full border ${errors.destination ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                            />
+                            {errors.destination && (
+                                <p className="text-red-500 text-sm mt-1">{errors.destination}</p>
+                            )}
+                        </div>
                     </div>
                 </div>
                 <div className="flex flex-col">
-                    <label className="mb-2 font-semibold text-lg">出発日 - 到着日:</label>
-                    <div className="flex">
-                        <input
-                            type="date"
-                            name="departureDate"
-                            value={dateToString(plan.departureDate)}
-                            onChange={handleDateChange}
-                            className="w-1/2 me-2 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                        <input
-                            type="date"
-                            name="arrivalDate"
-                            value={dateToString(plan.arrivalDate)}
-                            onChange={handleDateChange}
-                            className="w-1/2 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    <div className="mb-2 py-1 px-2 rounded bg-green-500 text-white text-sm">
+                        日程
+                    </div>
+                    <div className="flex justify-center">
+                        <DateRange
+                            ranges={range}
+                            onChange={handleSelect}
+                            moveRangeOnFirstSelection={false}
+                            rangeColors={['#3b82f6']}
+                            locale={ja}
+                            dateDisplayFormat={'yyyy/MM/dd'}
+                            editableDateInputs={true}
                         />
                     </div>
                 </div>
-                <div className="flex flex-col">
-                    <label className="mb-2 font-semibold text-lg">
-                        予算:
-                    </label>
+                <div>
+                    <div className="my-2 py-1 px-2 rounded bg-green-500 text-white text-sm">
+                        予算
+                    </div>
                     <div>
                         <input
                             type="number"
@@ -138,8 +168,10 @@ const EditPlanForm: React.FC<EditPlanProps> = ({ editingPlan }) => {
                         <span className="ms-2">
                             円
                         </span>
+
                     </div>
                     <input
+
                         type="range"
                         min="0"
                         max="1000000"
@@ -150,7 +182,9 @@ const EditPlanForm: React.FC<EditPlanProps> = ({ editingPlan }) => {
                     />
                 </div>
                 <div className="flex flex-col">
-                    <label className="mb-2 font-semibold text-lg">キーワード:</label>
+                    <div className="mb-2 py-1 px-2 rounded bg-green-500 text-white text-sm">
+                        キーワード
+                    </div>
                     <input
                         type="text"
                         name="keyword"

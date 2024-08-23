@@ -30,6 +30,19 @@ const AiPlanForm: React.FC<TravelFormProps> = ({ onAiCreate, onCancel, editPlan 
             key: 'selection',
         },
     ]);
+    const [errors, setErrors] = useState<{ departure?: string; destination?: string }>({});
+
+    const validateForm = () => {
+        const newErrors: { departure?: string; destination?: string } = {};
+        if (!plan.departure) {
+            newErrors.departure = "出発地を入力してください";
+        }
+        if (!plan.destination) {
+            newErrors.destination = "目的地を入力してください";
+        }
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
     const handleSelect = (ranges: any) => {
         setRange([ranges.selection]);
@@ -56,7 +69,9 @@ const AiPlanForm: React.FC<TravelFormProps> = ({ onAiCreate, onCancel, editPlan 
     };
 
     const handleAiCreate = async () => {
-        onAiCreate(plan);
+        if (validateForm()) {
+            onAiCreate(plan);
+        }
     };
 
     const handleCancel = async () => {
@@ -65,40 +80,57 @@ const AiPlanForm: React.FC<TravelFormProps> = ({ onAiCreate, onCancel, editPlan 
 
     return (
         <div className="max-w-lg mx-auto p-6 bg-white shadow-md rounded-lg space-y-6">
-            <div className="flex flex-col">
-                <label className="mb-2 font-semibold text-lg">出発地 - 目的地:</label>
+            <div className="">
+                <div className="mb-3 py-1 px-2 rounded bg-green-500 text-white text-sm">
+                    出発地 - 目的地
+                </div>
                 <div className="flex">
-                    <input
-                        type="text"
-                        name="departure"
-                        value={plan.departure}
-                        onChange={handleInputChange}
-                        className="me-2 w-1/2 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    <input
-                        type="text"
-                        name="destination"
-                        value={plan.destination}
-                        onChange={handleInputChange}
-                        className="w-1/2 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
+                    <div className="w-1/2 me-2">
+                        <input
+                            type="text"
+                            name="departure"
+                            value={plan.departure}
+                            onChange={handleInputChange}
+                            className={`p-2 w-full border ${errors.departure ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                        />
+                        {errors.departure && (
+                            <p className="text-red-500 text-sm mt-1">{errors.departure}</p>
+                        )}
+                    </div>
+                    <div className="w-1/2">
+                        <input
+                            type="text"
+                            name="destination"
+                            value={plan.destination}
+                            onChange={handleInputChange}
+                            className={`p-2 w-full border ${errors.destination ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                        />
+                        {errors.destination && (
+                            <p className="text-red-500 text-sm mt-1">{errors.destination}</p>
+                        )}
+                    </div>
+                </div>
+            </div>
+            <div className="">
+                <div className="mb-2 py-1 px-2 rounded bg-green-500 text-white text-sm">
+                    日程
+                </div>
+                <div className="flex justify-center">
+                    <DateRange
+                        ranges={range}
+                        onChange={handleSelect}
+                        moveRangeOnFirstSelection={false}
+                        rangeColors={['#3b82f6']}
+                        locale={ja}
+                        dateDisplayFormat={'yyyy/MM/dd'}
+                        editableDateInputs={true}
                     />
                 </div>
             </div>
-            <div className="flex flex-col">
-                <label className="mb-2 font-semibold text-lg">出発日 - 到着日:</label>
-                <DateRange
-                    ranges={range}
-                    onChange={handleSelect}
-                    moveRangeOnFirstSelection={false}
-                    rangeColors={['#3b82f6']}
-                    locale={ja}
-                    editableDateInputs={true}
-                />
-            </div>
-            <div className="flex flex-col">
-                <label className="mb-2 font-semibold text-lg">
-                    予算:
-                </label>
+            <div className="">
+                <div className="my-2 py-1 px-2 rounded bg-green-500 text-white text-sm">
+                    予算
+                </div>
                 <div>
                     <input
                         type="number"
@@ -123,14 +155,16 @@ const AiPlanForm: React.FC<TravelFormProps> = ({ onAiCreate, onCancel, editPlan 
                     className="mt-2 p-0 border border-gray-300 rounded-md"
                 />
             </div>
-            <div className="flex flex-col">
-                <label className="mb-2 font-semibold text-lg">キーワード:</label>
+            <div className="">
+                <div className="mb-2 py-1 px-2 rounded bg-green-500 text-white text-sm">
+                    キーワード
+                </div>
                 <input
                     type="text"
                     name="keyword"
                     value={plan.keyword}
                     onChange={handleInputChange}
-                    className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="p-2 border w-full border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
             </div>
 

@@ -44,7 +44,7 @@ const PlanCreatePage: React.FC = () => {
 
     return (
         <div className="pb-20">
-            <h1 className="text-center text-3xl p-3">AI Planner</h1>
+            <h1 className="text-center text-3xl p-3">Travel Planner</h1>
             <AiPlanForm
                 onAiCreate={onAiCreate}
                 onCancel={onCancel}
