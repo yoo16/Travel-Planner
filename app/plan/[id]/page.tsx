@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, } from 'next/navigation';
 import axios from 'axios';
 import Link from 'next/link';
-import PlanItemEditList from '@/app/components/PlanItemEditList';
+import PlanItemList from '@/app/components/PlanItemList';
 import { useLoading } from '@/app/context/LoadingContext';
 import PlanSummary from '@/app/components/PlanSummary';
 
@@ -39,14 +39,7 @@ const PlanDetailPage = () => {
     return (
         <div className="container mx-auto p-4">
             <PlanSummary plan={plan} />
-            <Link
-                href={`/user/plan/${plan.id}/edit`}
-                className="py-1 px-4 bg-yellow-500 text-white rounded-md"
-            >
-                編集
-            </Link>
-
-            <PlanItemEditList plan={plan} initialPlanItems={planItems} />
+            <PlanItemList plan={plan} initialPlanItems={planItems} />
         </div>
     );
 };

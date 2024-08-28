@@ -4,15 +4,13 @@ import PlanItemModal from './PlanItemModal';
 interface PlanItemDisplayProps {
     plan: Plan;
     planItem: PlanItem;
-    onEdit: () => void;
+    onEdit?: () => void;
 }
 
 const PlanItemDisplay: React.FC<PlanItemDisplayProps> = ({ plan, planItem, onEdit }) => {
 
     return (
         <div key={planItem.id} className="bg-gray-100 p-2 rounded-lg shadow">
-
-
             <div className="text-gray-700 my-4">
                 <span className="text-xs font-semibold rounded p-2 mx-2  bg-green-500 text-white">
                     行動
@@ -55,13 +53,15 @@ const PlanItemDisplay: React.FC<PlanItemDisplayProps> = ({ plan, planItem, onEdi
                 {planItem.memo}
             </div>
 
-            <div className="flex justify-end">
-                <button onClick={onEdit}
-                    className="me-2 py-1 px-4 bg-yellow-500 text-white text-sm rounded-md"
-                >
-                    Edit
-                </button>
-            </div>
+            {onEdit &&
+                <div className="flex justify-end">
+                    <button onClick={onEdit}
+                        className="me-2 py-1 px-4 bg-yellow-500 text-white text-sm rounded-md"
+                    >
+                        Edit
+                    </button>
+                </div>
+            }
         </div>
     );
 };

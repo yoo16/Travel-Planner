@@ -18,3 +18,21 @@ export function dateList(startDate: Date | string, endDate: Date | string): stri
 
     return dateList;
 }
+
+export function stayDuration(plan: Plan): string {
+    const departureDate = new Date(plan.departureDate);
+    const arrivalDate = new Date(plan.arrivalDate);
+
+
+    const timeDifference = arrivalDate.getTime() - departureDate.getTime();
+    const dayCount = timeDifference / (1000 * 3600 * 24) + 1;
+
+    console.log(departureDate, arrivalDate, dayCount)
+
+    var display = "日帰り";
+    if (dayCount > 1) {
+        const nightCount = dayCount - 1;
+        display = `${nightCount}泊${dayCount}日`;
+    }
+    return display;
+}

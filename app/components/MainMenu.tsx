@@ -10,8 +10,11 @@ export default function MainMenu() {
                     </Link>
                 </h1>
                 <nav className="space-x-4">
-                    <Link href="/plan/create" className="hover:text-gray-300">
-                        AIプラン作成
+                    <Link href="/plan" className="hover:text-gray-300">
+                        プランを探す
+                    </Link>
+                    <Link href="/user/plan" className="hover:text-gray-300">
+                        マイプラン
                     </Link>
                 </nav>
             </div>

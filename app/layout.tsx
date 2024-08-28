@@ -18,10 +18,12 @@ export default function RootLayout({
         <html lang="ja">
             <body>
                 <MainMenu />
-                <LoadingProvider>
-                    <Loading />
-                    {children}
-                </LoadingProvider>
+                <main className="container mx-auto p-4">
+                    <LoadingProvider>
+                        <Loading />
+                        {children}
+                    </LoadingProvider>
+                </main>
             </body>
         </html>
     );

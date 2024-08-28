@@ -36,7 +36,7 @@ const Home: React.FC = () => {
         <div>
             <div className="p-6">
                 <Link
-                    href="/plan/create"
+                    href="/user/plan/create"
                     className="me-2 py-2 px-4 bg-green-500 text-white rounded-md"
                 >
                     AIプラン作成

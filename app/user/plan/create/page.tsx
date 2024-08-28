@@ -29,11 +29,11 @@ const PlanCreatePage: React.FC = () => {
     };
 
     const onCancel = () => {
-        router.push('/');
+        router.push('/user/plan');
     }
 
     const onSave = async () => {
-        router.push('/');
+        onCancel();
     };
 
     return (
