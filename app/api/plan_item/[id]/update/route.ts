@@ -13,19 +13,16 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
         }
 
         console.log("ID: ", id)
-        var updatePlanItem = await prisma.planItem.findUnique({
-            where: { id: parseInt(id) },
-        });
+        console.log("planItem: ", planItem)
 
-
-        console.log("PlanItem:", updatePlanItem)
-        console.log("PlanItem:", planItem)
         try {
+            if (planItem.budget !== undefined && planItem.budget !== null) {
+                planItem.budget = parseInt(planItem.budget, 10);
+            }
             var savedItem = await prisma.planItem.update({
                 where: { id: parseInt(id) },
                 data: planItem,
             });
-
             return NextResponse.json(savedItem);
         } catch (error) {
             console.error(error);

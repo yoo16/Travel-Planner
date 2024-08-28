@@ -197,7 +197,7 @@ const PlanItemForm: React.FC<PlanItemFormProps> = ({ plan, planItem, onSubmit, o
                 <div className="flex flex-col">
                     <label className="text-sm font-semibold text-gray-600 mb-1">予算</label>
                     <input
-                        type="text"
+                        type="number"
                         name="budget"
                         value={editPlanItem.budget}
                         onChange={handleInputChange}

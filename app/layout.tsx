@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import { LoadingProvider } from "@/app/context/LoadingContext";
 import Loading from "@/app/components/Loading";
-
-const inter = Inter({ subsets: ["latin"] });
+import MainMenu from "./components/MainMenu";
 
 export const metadata: Metadata = {
     title: "Create Next App",
@@ -17,8 +15,9 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en">
-            <body className={inter.className}>
+        <html lang="ja">
+            <body>
+                <MainMenu />
                 <LoadingProvider>
                     <Loading />
                     {children}

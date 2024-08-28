@@ -32,7 +32,6 @@ const PlanEditPage: React.FC = () => {
 
     return (
         <div>
-            <h1 className="text-center text-3xl p-3">Travel Planner</h1>
             {plan && (
                 <EditPlanForm editingPlan={plan} />
             )}

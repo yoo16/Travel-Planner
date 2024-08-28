@@ -1,9 +1,8 @@
 export const createPrompt = (plan: any) => {
-    var prompt = "つぎの条件で旅行プランを作成し、 JSONフォーマットのみでレスポンス\n[```json]などのマークダウンは除く\n\n"
+    var prompt = "つぎの条件で旅行プランを作成し、 JSONフォーマットでレスポンス\n\n"
 
     prompt += "{\n";
     for (var column in plan) {
-        console.log("Column:", column);
         prompt += `    "${column}": "${plan[column]}",\n`
     }
     prompt += TemplateJson;
@@ -31,7 +30,7 @@ export const TemplateJson: string = `
                 "accommodation": "",
                 "budget": xxxx,
                 "memo": "",
-            },
+            }
         ],
         [
             {
@@ -51,7 +50,7 @@ export const TemplateJson: string = `
                 "accommodation": "",
                 "budget": xxxx,
                 "memo": "",
-            },
+            }
         ],
     ]
 `;

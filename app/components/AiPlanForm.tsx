@@ -30,7 +30,7 @@ const AiPlanForm: React.FC<TravelFormProps> = ({ onAiCreate, onCancel, editPlan 
             key: 'selection',
         },
     ]);
-    const [errors, setErrors] = useState<{ departure?: string; destination?: string }>({});
+    const [errors, setErrors] = useState<ErrorMessages>({});
 
     const validateForm = () => {
         const newErrors: { departure?: string; destination?: string } = {};
@@ -80,6 +80,11 @@ const AiPlanForm: React.FC<TravelFormProps> = ({ onAiCreate, onCancel, editPlan 
 
     return (
         <div className="max-w-lg mx-auto p-6 bg-white shadow-md rounded-lg space-y-6">
+            {errors.general && (
+                <div className="mb-4 text-red-500 text-sm">
+                    {errors.general}
+                </div>
+            )}
             <div className="">
                 <div className="mb-3 py-1 px-2 rounded bg-green-500 text-white text-sm">
                     出発地 - 目的地
