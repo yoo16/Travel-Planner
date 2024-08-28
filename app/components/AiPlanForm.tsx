@@ -11,7 +11,7 @@ import axios from 'axios';
 
 interface TravelFormProps {
     onAiCreate: (plan: Plan, planItems:PlanItem[][]) => void;
-    onCancel: () => void;
+    onClose: () => void;
     editPlan?: Plan,
 }
 
@@ -24,7 +24,7 @@ const initPlan: Plan = {
     keywords: '',
 }
 
-const AiPlanForm = ({ onAiCreate, onCancel, editPlan }:TravelFormProps) => {
+const AiPlanForm = ({ onAiCreate, onClose, editPlan }:TravelFormProps) => {
     const { setLoading } = useLoading();
 
     const [plan, setPlan] = useState<Plan>(editPlan ? editPlan : initPlan);
@@ -111,8 +111,8 @@ const AiPlanForm = ({ onAiCreate, onCancel, editPlan }:TravelFormProps) => {
         }
     };
 
-    const handleCancel = async () => {
-        onCancel();
+    const handleClose = async () => {
+        onClose();
     };
 
     return (
@@ -210,8 +210,8 @@ const AiPlanForm = ({ onAiCreate, onCancel, editPlan }:TravelFormProps) => {
                 <button onClick={handleAiCreate} type="button" className="mx-1 py-2 px-4 bg-blue-500 text-white rounded-md">
                     AIプラン作成
                 </button>
-                <button onClick={handleCancel} type="button" className="mx-1 py-2 px-4 bg-white text-blue-500 border border-blue-500 rounded-md">
-                    Close
+                <button onClick={handleClose} type="button" className="mx-1 py-2 px-4 bg-white text-blue-500 border border-blue-500 rounded-md">
+                    戻る
                 </button>
             </div>
         </div>

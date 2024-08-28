@@ -123,7 +123,6 @@ const PlanItemEditList: React.FC<PlanItemEditListtProps> = ({ plan, initialPlanI
                     return dayItems.map((item, index) => ({
                         ...item,
                         order: index + 1,
-                        date: new Date(plan.departureDate).setDate(new Date(plan.departureDate).getDate() + dayIndex),
                     }));
                 }).flat(),
             });
@@ -145,58 +144,71 @@ const PlanItemEditList: React.FC<PlanItemEditListtProps> = ({ plan, initialPlanI
                     onDelete={handleDelete}
                 />
             )}
-            <DragDropContext onDragEnd={onDragEnd}>
-                {planItems.map((dayPlanItems, dayIndex) => (
-                    <div key={dayIndex}>
-                        <div className="mt-6">
-                            <h2 className="text-xl text-gray-600 mb-6">
-                                {new Date(dayPlanItems[0].date).toLocaleDateString()} - {dayIndex + 1}日目 -
-                            </h2>
 
-                            <div className="my-2">
-                                <button
-                                    onClick={(e) => onAdd(e, dayPlanItems[0].date)}
-                                    className="me-2 py-1 px-4 text-sm bg-yellow-500 text-white rounded-md"
-                                >
-                                    追加
-                                </button>
-                            </div>
-                        </div>
-                        <Droppable droppableId={`${dayIndex}`} key={dayIndex}>
-                            {(provided) => (
-                                <div
-                                    {...provided.droppableProps}
-                                    ref={provided.innerRef}
-                                    className="space-y-4"
-                                >
-                                    {dayPlanItems.map((planItem, planItemIndex) => (
-                                        <Draggable
-                                            key={planItem.id}
-                                            draggableId={`${planItem.id}`}
-                                            index={planItemIndex}
-                                        >
-                                            {(provided) => (
-                                                <div
-                                                    ref={provided.innerRef}
-                                                    {...provided.draggableProps}
-                                                    {...provided.dragHandleProps}
-                                                >
-                                                    <PlanItemDisplay
-                                                        plan={plan}
-                                                        planItem={planItem}
-                                                        onEdit={() => onEdit(planItem)}
-                                                    />
-                                                </div>
-                                            )}
-                                        </Draggable>
-                                    ))}
-                                    {provided.placeholder}
+            <div className="my-6">
+                <h2 className="text-2xl">プラン内容</h2>
+                <div className="my-2">
+                    <button
+                        onClick={(e) => onAdd(e, plan.departureDate)}
+                        className="me-2 py-1 px-4 text-sm bg-yellow-500 text-white rounded-md"
+                    >
+                        追加
+                    </button>
+                </div>
+
+                <DragDropContext onDragEnd={onDragEnd}>
+                    {planItems.map((dayPlanItems, dayIndex) => (
+                        <div key={dayIndex}>
+                            <div className="mt-6">
+                                <h2 className="text-xl text-gray-600 mb-6">
+                                    {new Date(dayPlanItems[0].date).toLocaleDateString()} - {dayIndex + 1}日目 -
+                                </h2>
+
+                                <div className="my-2">
+                                    <button
+                                        onClick={(e) => onAdd(e, dayPlanItems[0].date)}
+                                        className="me-2 py-1 px-4 text-sm bg-yellow-500 text-white rounded-md"
+                                    >
+                                        追加
+                                    </button>
                                 </div>
-                            )}
-                        </Droppable>
-                    </div>
-                ))}
-            </DragDropContext>
+                            </div>
+                            <Droppable droppableId={`${dayIndex}`} key={dayIndex}>
+                                {(provided) => (
+                                    <div
+                                        {...provided.droppableProps}
+                                        ref={provided.innerRef}
+                                        className="space-y-4"
+                                    >
+                                        {dayPlanItems.map((planItem, planItemIndex) => (
+                                            <Draggable
+                                                key={planItem.id}
+                                                draggableId={`${planItem.id}`}
+                                                index={planItemIndex}
+                                            >
+                                                {(provided) => (
+                                                    <div
+                                                        ref={provided.innerRef}
+                                                        {...provided.draggableProps}
+                                                        {...provided.dragHandleProps}
+                                                    >
+                                                        <PlanItemDisplay
+                                                            plan={plan}
+                                                            planItem={planItem}
+                                                            onEdit={() => onEdit(planItem)}
+                                                        />
+                                                    </div>
+                                                )}
+                                            </Draggable>
+                                        ))}
+                                        {provided.placeholder}
+                                    </div>
+                                )}
+                            </Droppable>
+                        </div>
+                    ))}
+                </DragDropContext>
+            </div>
         </div>
 
     );

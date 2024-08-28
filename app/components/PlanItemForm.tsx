@@ -123,6 +123,10 @@ const PlanItemForm: React.FC<PlanItemFormProps> = ({ plan, planItem, onSubmit, o
                         </select>
                     </div>
 
+                </div>
+
+                <div className="flex flex-col">
+
                     <div className="flex flex-col">
                         <label className="text-sm font-semibold text-gray-600 mb-1">移動</label>
                         <div className="flex items-center">

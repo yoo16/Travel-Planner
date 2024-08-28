@@ -10,7 +10,7 @@ interface PlanSummaryProps {
 
 const PlanSummary: React.FC<PlanSummaryProps> = ({ plan }) => {
     return (
-        <div className="my-5">
+        <div className="mb-5">
             <h2 className="text-2xl py-3">
                 <span>{plan.departure}</span>
                 <span className="m-2">-</span>

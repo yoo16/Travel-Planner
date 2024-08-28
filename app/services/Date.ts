@@ -2,6 +2,22 @@ export function dateToString(date: Date): string {
     return date ? new Date(date).toISOString().split('T')[0] : '';
 }
 
+export function  getDateIndices(departureDate:Date, arrivalDate:Date) {
+    const departure = new Date(departureDate);
+    const arrival = new Date(arrivalDate);
+    const dateIndices = [];
+
+    var currentDate = new Date(departure);
+
+    while (currentDate <= arrival) {
+        const dayIndex = Math.floor((currentDate - departure) / (1000 * 60 * 60 * 24));
+        dateIndices.push(dayIndex);
+        currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    return dateIndices;
+}
+
 export function dateList(startDate: Date | string, endDate: Date | string): string[] {
     const start = new Date(startDate);
     const end = new Date(endDate);

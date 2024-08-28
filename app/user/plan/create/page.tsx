@@ -28,19 +28,19 @@ const PlanCreatePage: React.FC = () => {
         }
     };
 
-    const onCancel = () => {
+    const handleClose = () => {
         router.push('/user/plan');
     }
 
     const onSave = async () => {
-        onCancel();
+        handleClose();
     };
 
     return (
         <div className="pb-20">
             <AiPlanForm
                 onAiCreate={onAiCreate}
-                onCancel={onCancel}
+                onClose={handleClose}
             />
             <div ref={planListRef}>
                 {plan && planItems &&

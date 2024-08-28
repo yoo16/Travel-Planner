@@ -7,9 +7,12 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     try {
         const { planItems } = await req.json();
         for (var planItem of planItems) {
-            await prisma.planItem.update({
+            const result = await prisma.planItem.update({
                 where: { id: planItem.id },
-                data: { order: planItem.order },
+                data: { 
+                    order: planItem.order,
+                    date: planItem.date,
+                },
             });
         }
         return NextResponse.json({ success: true });

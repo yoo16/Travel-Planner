@@ -38,13 +38,18 @@ const PlanDetailPage = () => {
 
     return (
         <div className="container mx-auto p-4">
-            <PlanSummary plan={plan} />
-            <Link
-                href={`/user/plan/${plan.id}/edit`}
-                className="py-1 px-4 bg-yellow-500 text-white rounded-md"
-            >
-                編集
-            </Link>
+            <div className="border-b p-5">
+                <PlanSummary plan={plan} />
+
+                <div className="flex justify-end">
+                    <Link
+                        href={`/user/plan/${plan.id}/edit`}
+                        className="py-1 px-4 bg-yellow-500 text-white rounded-md"
+                    >
+                        編集
+                    </Link>
+                </div>
+            </div>
 
             <PlanItemEditList plan={plan} initialPlanItems={planItems} />
         </div>
