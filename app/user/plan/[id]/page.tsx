@@ -5,12 +5,11 @@ import { useParams, } from 'next/navigation';
 import axios from 'axios';
 import Link from 'next/link';
 import PlanItemList from '@/app/components/PlanItemList';
-import { dateToString } from '@/app/services/Date';
 import { useLoading } from '@/app/context/LoadingContext';
 import PlanSummary from '@/app/components/PlanSummary';
-import PlanItemModal from '@/app/components/PlanItemModal';
 
-const PlanDetailPage: React.FC = () => {
+const PlanDetailPage = () => {
+    // TODO: User
     const { setLoading } = useLoading();
     const { id } = useParams();
 

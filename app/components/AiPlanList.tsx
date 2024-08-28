@@ -2,6 +2,7 @@ import React from 'react';
 import { useLoading } from '../context/LoadingContext';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import { filterPlan } from '@/app/models/Plan';
 
 interface AiPlanListProps {
     plan: Plan;
@@ -11,18 +12,6 @@ interface AiPlanListProps {
 
 const AiPlanList: React.FC<AiPlanListProps> = ({ plan, planItems, onSave }) => {
     const { setLoading } = useLoading();
-
-    function filterPlan(rawPlan: any): Plan {
-        return {
-            departure: rawPlan.departure,
-            destination: rawPlan.destination,
-            departureDate: new Date(rawPlan.departureDate),
-            arrivalDate: new Date(rawPlan.arrivalDate),
-            budget: rawPlan.budget ? parseInt(rawPlan.budget, 10) : 0,
-            keywords: rawPlan.keywords,
-        };
-    }
-
 
     const handleSave = async () => {
         if (!plan || !planItems) return;
@@ -34,9 +23,7 @@ const AiPlanList: React.FC<AiPlanListProps> = ({ plan, planItems, onSave }) => {
                     planItems: planItems.flat(),
                 }
             );
-            if (saveResponse) {
-                onSave();
-            }
+            if (saveResponse) onSave();
         } catch (error) {
             console.error('Error saving travel plan:', error);
         } finally {
