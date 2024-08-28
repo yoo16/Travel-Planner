@@ -10,6 +10,7 @@ export async function POST(req: NextRequest) {
         console.log("Plan: ", plan);
         console.log("Plan Items:", planItems);
 
+        plan.budget = Number(plan.budget)
         const savedPlan = await prisma.plan.create({
             data: plan,
         });

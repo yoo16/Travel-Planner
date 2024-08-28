@@ -5,6 +5,6 @@ interface Plan {
     departureDate: Date;
     arrivalDate: Date;
     budget?: number;
-    keyword?: string;
+    keywords?: string;
     planItems?: PlanItem[][];
 }

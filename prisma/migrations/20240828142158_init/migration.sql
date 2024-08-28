@@ -6,7 +6,7 @@ CREATE TABLE `plans` (
     `departureDate` DATETIME(3) NOT NULL,
     `arrivalDate` DATETIME(3) NOT NULL,
     `budget` DOUBLE NULL,
-    `keyword` VARCHAR(191) NULL,
+    `keywords` VARCHAR(191) NULL,
     `order` INTEGER NULL DEFAULT 0,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NULL,

@@ -33,9 +33,9 @@ const Home: React.FC = () => {
             <div className="p-6">
                 <Link
                     href="/plan/create"
-                    className="me-2 py-1 px-4 bg-yellow-500 text-white rounded-md"
+                    className="me-2 py-2 px-4 bg-green-500 text-white rounded-md"
                 >
-                    New
+                    AIプラン作成
                 </Link>
 
                 <ul className="mt-4">
@@ -45,9 +45,9 @@ const Home: React.FC = () => {
                             <div className="flex">
                                 <div>
                                     <Link href={`/plan/${plan.id}`}
-                                        className="me-2 py-1 px-4 bg-blue-500 text-white rounded-md"
+                                        className="me-2 py-1 px-4 text-blue-500 border border-blue-500 rounded-md"
                                     >
-                                        Plan
+                                        編集
                                     </Link>
 
                                     <span className="py-1 px-2 mx-3 rounded bg-green-500 text-white text-xs">

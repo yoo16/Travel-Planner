@@ -14,7 +14,7 @@ model Plan {
     departureDate DateTime
     arrivalDate   DateTime
     budget        Float?
-    keyword       String?
+    keywords      String?
     order         Int?       @default(0)
     createdAt     DateTime   @default(now())
     updatedAt     DateTime?   @updatedAt

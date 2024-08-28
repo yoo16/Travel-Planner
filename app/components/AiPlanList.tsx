@@ -12,13 +12,25 @@ interface AiPlanListProps {
 const AiPlanList: React.FC<AiPlanListProps> = ({ plan, planItems, onSave }) => {
     const { setLoading } = useLoading();
 
+    function filterPlan(rawPlan: any): Plan {
+        return {
+            departure: rawPlan.departure,
+            destination: rawPlan.destination,
+            departureDate: new Date(rawPlan.departureDate),
+            arrivalDate: new Date(rawPlan.arrivalDate),
+            budget: rawPlan.budget ? parseInt(rawPlan.budget, 10) : 0,
+            keywords: rawPlan.keywords,
+        };
+    }
+
+
     const handleSave = async () => {
         if (!plan || !planItems) return;
         try {
             setLoading(true);
             const saveResponse = await axios.post('/api/ai/save',
                 {
-                    plan: plan,
+                    plan: filterPlan(plan),
                     planItems: planItems.flat(),
                 }
             );
@@ -74,7 +86,7 @@ const AiPlanList: React.FC<AiPlanListProps> = ({ plan, planItems, onSave }) => {
                                     <span className="text-xs font-semibold rounded p-2 mx-2  bg-green-500 text-white">
                                         予算
                                     </span>
-                                    {plan.budget?.toLocaleString()}
+                                    {planItem.budget?.toLocaleString()}
                                     <span className="px-1">円</span>
                                 </div>
 

@@ -187,8 +187,8 @@ const EditPlanForm: React.FC<EditPlanProps> = ({ editingPlan }) => {
                     </div>
                     <input
                         type="text"
-                        name="keyword"
-                        value={plan.keyword}
+                        name="keywords"
+                        value={plan.keywords}
                         onChange={handleInputChange}
                         className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />

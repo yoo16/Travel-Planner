@@ -3,7 +3,6 @@
 import React, { useState, useRef } from 'react';
 import AiPlanForm from '@/app/components/AiPlanForm';
 import AiPlanList from '@/app/components/AiPlanList';
-import axios from 'axios';
 import { useLoading } from '@/app/context/LoadingContext';
 import { useRouter } from 'next/navigation';
 
@@ -15,13 +14,8 @@ const PlanCreatePage: React.FC = () => {
     const [plan, setPlan] = useState<Plan>();
     const [planItems, setPlanItems] = useState<PlanItem[][]>();
 
-    const onAiCreate = async (plan: Plan) => {
+    const onAiCreate = async (plan: Plan, planItems: PlanItem[][]) => {
         try {
-            setLoading(true);
-            const response = await axios.post('/api/ai/create', plan);
-            console.log(response.data)
-
-            const planItems = response.data.planItems;
             setPlanItems(planItems);
             setPlan(plan);
         } catch (error) {
