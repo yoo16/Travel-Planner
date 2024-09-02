@@ -92,8 +92,7 @@ const EditPlanForm: React.FC<EditPlanProps> = ({ editingPlan }) => {
     const onCancel = async () => {
         try {
             setLoading(true);
-            const uri = `/api/plan/`;
-            router.push(`/plan/${plan.id}`);
+            router.push(`/user/plan/${plan.id}`);
         } catch (error) {
             console.error('Error saving plan:', error);
         } finally {
@@ -198,19 +197,19 @@ const EditPlanForm: React.FC<EditPlanProps> = ({ editingPlan }) => {
                         onClick={onUpdate}
                         className="me-3 py-2 px-4 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600"
                     >
-                        Update
+                        更新
                     </button>
                     <button
                         onClick={onDelete}
                         className="me-2 py-2 px-4 border bg-red-500 text-white rounded-md"
                     >
-                        Delete
+                        削除
                     </button>
                     <button
                         onClick={onCancel}
                         className="py-2 px-4 border border-blue-500 text-blue-500 font-semibold rounded-md"
                     >
-                        Close
+                        戻る
                     </button>
                 </div>
             </div>
