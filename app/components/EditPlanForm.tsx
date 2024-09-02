@@ -68,7 +68,7 @@ const EditPlanForm: React.FC<EditPlanProps> = ({ editingPlan }) => {
             setLoading(true);
             const uri = `/api/plan/${plan.id}/update`;
             await axios.post(uri, plan);
-            router.push(`/plan/${plan.id}`);
+            router.push(`/user/plan/${plan.id}`);
         } catch (error) {
             console.error('Error saving plan:', error);
         } finally {
@@ -81,7 +81,7 @@ const EditPlanForm: React.FC<EditPlanProps> = ({ editingPlan }) => {
         try {
             setLoading(true);
             await axios.post(`/api/plan/${plan.id}/delete`);
-            router.push(`/plan/${plan.id}`);
+            router.push(`/user/plan/`);
         } catch (error) {
             console.error('Error deleting plan:', error);
         } finally {
