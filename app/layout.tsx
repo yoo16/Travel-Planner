@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+
 import { LoadingProvider } from "@/app/context/LoadingContext";
 import Loading from "@/app/components/Loading";
 import MainMenu from "./components/MainMenu";

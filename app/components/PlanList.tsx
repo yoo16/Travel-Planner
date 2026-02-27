@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -8,42 +8,50 @@ import { useLoading } from '@/app/context/LoadingContext';
 
 const PlanList = () => {
     const { setLoading } = useLoading();
-
     const [plans, setPlans] = useState<Plan[]>([]);
 
+    // プラン一覧を取得する関数
     const fetchPlans = async () => {
         setLoading(true);
         try {
-            const response = await axios.get('/api/plan/get');
-            console.log(response.data)
-            setPlans(response.data);
-        } catch (error) {
-            console.error('Error fetching plans:', error);
+            const { data } = await axios.get('/api/plan/get');
+            setPlans(data);
+        } catch (err) {
+            console.error('Error fetching plans:', err);
         } finally {
             setLoading(false);
         }
     };
 
+    // プラン一覧を取得するための useEffect
     useEffect(() => {
-        fetchPlans()
+        fetchPlans();
     }, []);
 
     return (
         <div>
-            <h1 className="text-2xl text-gray-800">プラン</h1>
-            <div>
-                <ul className="mt-4">
-                    {plans.map(plan => (
-                        <li key={plan.id} className="py-2">
+            <h1 className="text-2xl font-bold text-gray-800 mb-6">プランを探す</h1>
 
-                            <Link href={`plan/${plan.id}/`}>
-                                <span className="px-3 py-1 bg-green-500 text-xs text-white">{stayDuration(plan)}</span>
-                                <span className="p-3">{plan.destination}</span>
-                            </Link>
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {plans.map((plan) => (
+                    <Link
+                        key={plan.id}
+                        href={`/plan/${plan.id}`}
+                        className="block rounded-xl border border-gray-200 bg-white shadow-sm
+                       hover:shadow-md hover:ring-2 hover:ring-green-400/30
+                       transition"
+                    >
+                        <div className="p-4 space-y-3">
+                            {/* 宿泊日数バッジ */}
+                            <span className="inline-block rounded-full bg-green-500 px-3 py-1 text-xs font-semibold text-white">
+                                {stayDuration(plan)}
+                            </span>
 
-                        </li>
-                    ))}
-                </ul>
+                            {/* 行き先（プラン名など） */}
+                            <p className="text-lg font-medium text-gray-900">{plan.destination}</p>
+                        </div>
+                    </Link>
+                ))}
             </div>
         </div>
     );
