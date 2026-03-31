@@ -1,13 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import PlanItemForm from '@/app/components/PlanItemForm';
 import PlanItemDisplay from './PlanItemDisplay';
-import { dateList, dateToString } from '../services/Date';
-import axios from 'axios';
-import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import { useLoading } from '../context/LoadingContext';
-import PlanItemModal from './PlanItemModal';
 
 interface PlanItemListProps {
     plan: Plan;
@@ -26,9 +21,10 @@ const PlanItemList: React.FC<PlanItemListProps> = ({ plan, initialPlanItems }) =
 
         try {
             setLoading(true);
-            const response = await axios.get(`/api/plan/${plan.id}`);
-            if (response.status === 200) {
-                setPlanItems(response.data.planItems);
+            const response = await fetch(`/api/plan/${plan.id}`);
+            if (response.ok) {
+                const data = await response.json();
+                setPlanItems(data.planItems);
             }
         } catch (error) {
             console.error('Error fetching plan items:', error);

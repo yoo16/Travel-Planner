@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import axios from 'axios';
 import EditPlanForm from '@/app/components/EditPlanForm';
 import { useParams, useRouter } from 'next/navigation';
 import { useLoading } from '@/app/context/LoadingContext';
@@ -17,8 +16,11 @@ const PlanEditPage: React.FC = () => {
         if (!id) return;
         setLoading(true);
         try {
-            const response = await axios.get(`/api/plan/${id}`);
-            setPlan(response.data);
+            const response = await fetch(`/api/plan/${id}`);
+            if (response.ok) {
+                const data = await response.json();
+                setPlan(data);
+            }
         } catch (error) {
             console.error('Error fetching plan details:', error);
         } finally {

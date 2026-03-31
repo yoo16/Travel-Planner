@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import Link from 'next/link';
 import { dateToString } from '@/app/services/Date';
 import { useLoading } from '@/app/context/LoadingContext';
@@ -18,9 +17,12 @@ const Home: React.FC = () => {
     const fetchPlans = async () => {
         setLoading(true);
         try {
-            const response = await axios.get('/api/plan/get');
-            console.log(response.data)
-            setPlans(response.data);
+            const response = await fetch('/api/plan/get');
+            if (response.ok) {
+                const data = await response.json();
+                console.log(data);
+                setPlans(data);
+            }
         } catch (error) {
             console.error('Error fetching plans:', error);
         } finally {

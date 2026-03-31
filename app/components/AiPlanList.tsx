@@ -1,7 +1,5 @@
 import React from 'react';
 import { useLoading } from '../context/LoadingContext';
-import axios from 'axios';
-import { useRouter } from 'next/navigation';
 import { filterPlan } from '@/app/models/Plan';
 
 interface AiPlanListProps {
@@ -17,13 +15,17 @@ const AiPlanList: React.FC<AiPlanListProps> = ({ plan, planItems, onSave }) => {
         if (!plan || !planItems) return;
         try {
             setLoading(true);
-            const saveResponse = await axios.post('/api/ai/save',
-                {
+            const response = await fetch('/api/ai/save', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
                     plan: filterPlan(plan),
                     planItems: planItems.flat(),
-                }
-            );
-            if (saveResponse) onSave();
+                }),
+            });
+            if (response.ok) onSave();
         } catch (error) {
             console.error('Error saving travel plan:', error);
         } finally {

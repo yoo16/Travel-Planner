@@ -1,6 +1,5 @@
 'use client';
 
-import axios from 'axios';
 import React, { useState } from 'react';
 import { transportations } from '@/app/data/transportations';
 import { dateList, dateToString } from '@/app/services/Date';
@@ -47,9 +46,15 @@ const PlanItemForm: React.FC<PlanItemFormProps> = ({ plan, planItem, onSubmit, o
         try {
             setLoading(true);
             const uri = `/api/plan_item/${editPlanItem.id}/update`;
-            const response = await axios.post(uri, editPlanItem);
+            const response = await fetch(uri, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(editPlanItem),
+            });
 
-            if (response.status == 200) {
+            if (response.ok) {
                 onSubmit(editPlanItem);
             }
         } catch (error) {
@@ -64,9 +69,11 @@ const PlanItemForm: React.FC<PlanItemFormProps> = ({ plan, planItem, onSubmit, o
         try {
             setLoading(true);
             const uri = `/api/plan_item/${planItem.id}/delete`;
-            const response = await axios.post(uri);
+            const response = await fetch(uri, {
+                method: 'POST',
+            });
 
-            if (response.status == 200) {
+            if (response.ok) {
                 onDelete(planItem.id);
             }
         } catch (error) {

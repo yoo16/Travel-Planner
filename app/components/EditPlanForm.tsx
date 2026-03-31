@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useLoading } from '@/app/context/LoadingContext';
 import { DateRange } from 'react-date-range';
@@ -67,8 +66,16 @@ const EditPlanForm: React.FC<EditPlanProps> = ({ editingPlan }) => {
         try {
             setLoading(true);
             const uri = `/api/plan/${plan.id}/update`;
-            await axios.post(uri, plan);
-            router.push(`/user/plan/${plan.id}`);
+            const response = await fetch(uri, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(plan),
+            });
+            if (response.ok) {
+                router.push(`/user/plan/${plan.id}`);
+            }
         } catch (error) {
             console.error('Error saving plan:', error);
         } finally {
@@ -80,8 +87,12 @@ const EditPlanForm: React.FC<EditPlanProps> = ({ editingPlan }) => {
         if (!plan.id) return;
         try {
             setLoading(true);
-            await axios.post(`/api/plan/${plan.id}/delete`);
-            router.push(`/user/plan/`);
+            const response = await fetch(`/api/plan/${plan.id}/delete`, {
+                method: 'POST',
+            });
+            if (response.ok) {
+                router.push(`/user/plan/`);
+            }
         } catch (error) {
             console.error('Error deleting plan:', error);
         } finally {

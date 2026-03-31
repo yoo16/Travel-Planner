@@ -7,7 +7,6 @@ import 'react-date-range/dist/theme/default.css';
 import { ja } from 'date-fns/locale';
 import KeywordInput from './KeywordInput';
 import { useLoading } from '../context/LoadingContext';
-import axios from 'axios';
 
 interface TravelFormProps {
     onAiCreate: (plan: Plan, planItems:PlanItem[][]) => void;
@@ -93,13 +92,23 @@ const AiPlanForm = ({ onAiCreate, onClose, editPlan }:TravelFormProps) => {
             if (confirm('AIプランを作成しますか？')) {
                 try {
                     setLoading(true);
-                    const response = await axios.post('/api/ai/create', plan);
-                    console.log(response.data)
-                    if (response.data.error) {
-                        setErrors(response.data.error);
+                    const response = await fetch('/api/ai/create', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(plan),
+                    });
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    const data = await response.json();
+                    console.log(data)
+                    if (data.error) {
+                        setErrors(data.error);
                     } else {
-                        const plan = response.data;
-                        const planItems = response.data.planItems;
+                        const plan = data;
+                        const planItems = data.planItems;
                         onAiCreate(plan, planItems);
                     }
                 } catch (error) {

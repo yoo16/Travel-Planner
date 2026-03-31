@@ -1,10 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import PlanItemForm from '@/app/components/PlanItemForm';
 import PlanItemDisplay from './PlanItemDisplay';
 import { dateList, dateToString } from '../services/Date';
-import axios from 'axios';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import { useLoading } from '../context/LoadingContext';
 import PlanItemModal from './PlanItemModal';
@@ -26,9 +24,10 @@ const PlanItemEditList: React.FC<PlanItemEditListtProps> = ({ plan, initialPlanI
 
         try {
             setLoading(true);
-            const response = await axios.get(`/api/plan/${plan.id}`);
-            if (response.status === 200) {
-                setPlanItems(response.data.planItems);
+            const response = await fetch(`/api/plan/${plan.id}`);
+            if (response.ok) {
+                const data = await response.json();
+                setPlanItems(data.planItems);
             }
         } catch (error) {
             console.error('Error fetching plan items:', error);
@@ -52,20 +51,28 @@ const PlanItemEditList: React.FC<PlanItemEditListtProps> = ({ plan, initialPlanI
                 memo: ''
             };
             const uri = `/api/plan_item/add`;
-            const response = await axios.post(uri, newPlanItem);
-            const planItem = response.data;
+            const response = await fetch(uri, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(newPlanItem),
+            });
 
-            if (planItem.id > 0) {
-                const updatedPlanItems = [...planItems];
-                const dayIndex = dateList(plan.departureDate, plan.arrivalDate).indexOf(dateToString(date));
+            if (response.ok) {
+                const planItem = await response.json();
+                if (planItem.id > 0) {
+                    const updatedPlanItems = [...planItems];
+                    const dayIndex = dateList(plan.departureDate, plan.arrivalDate).indexOf(dateToString(date));
 
-                if (updatedPlanItems[dayIndex]) {
-                    updatedPlanItems[dayIndex] = [...updatedPlanItems[dayIndex], planItem];
-                } else {
-                    updatedPlanItems[dayIndex] = [planItem];
+                    if (updatedPlanItems[dayIndex]) {
+                        updatedPlanItems[dayIndex] = [...updatedPlanItems[dayIndex], planItem];
+                    } else {
+                        updatedPlanItems[dayIndex] = [planItem];
+                    }
+                    setPlanItems(updatedPlanItems);
+                    onEdit(planItem);
                 }
-                setPlanItems(updatedPlanItems);
-                onEdit(planItem);
             }
         } catch (error) {
             console.error('Error saving plan item:', error);
@@ -118,13 +125,19 @@ const PlanItemEditList: React.FC<PlanItemEditListtProps> = ({ plan, initialPlanI
 
         try {
             setLoading(true);
-            await axios.post(`/api/plan/${plan.id}/items/update_order`, {
-                planItems: updatedPlanItems.map((dayItems, dayIndex) => {
-                    return dayItems.map((item, index) => ({
-                        ...item,
-                        order: index + 1,
-                    }));
-                }).flat(),
+            await fetch(`/api/plan/${plan.id}/items/update_order`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    planItems: updatedPlanItems.map((dayItems, dayIndex) => {
+                        return dayItems.map((item, index) => ({
+                            ...item,
+                            order: index + 1,
+                        }));
+                    }).flat(),
+                }),
             });
         } catch (error) {
             console.error('Error updating plan item order:', error);

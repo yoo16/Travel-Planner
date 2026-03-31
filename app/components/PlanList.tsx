@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import Link from 'next/link';
 import { stayDuration } from '@/app/services/Date';
 import { useLoading } from '@/app/context/LoadingContext';
@@ -14,7 +13,11 @@ const PlanList = () => {
     const fetchPlans = async () => {
         setLoading(true);
         try {
-            const { data } = await axios.get('/api/plan/get');
+            const response = await fetch('/api/plan/get');
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
             setPlans(data);
         } catch (err) {
             console.error('Error fetching plans:', err);

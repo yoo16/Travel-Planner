@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, } from 'next/navigation';
-import axios from 'axios';
 import Link from 'next/link';
 import PlanItemList from '@/app/components/PlanItemList';
 import { useLoading } from '@/app/context/LoadingContext';
@@ -20,9 +19,12 @@ const PlanDetailPage = () => {
         if (!id) return;
         setLoading(true);
         try {
-            const response = await axios.get(`/api/plan/${id}`);
-            setPlan(response.data);
-            setPlanItems(response.data.planItems);
+            const response = await fetch(`/api/plan/${id}`);
+            if (response.ok) {
+                const data = await response.json();
+                setPlan(data);
+                setPlanItems(data.planItems);
+            }
         } catch (error) {
             console.error('Error fetching plan details:', error);
         } finally {
