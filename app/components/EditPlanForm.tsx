@@ -1,230 +1,251 @@
-'use client'
+'use client';
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useLoading } from '@/app/context/LoadingContext';
 import { DateRange } from 'react-date-range';
 import { ja } from 'date-fns/locale';
+import { FaArrowRotateLeft, FaFloppyDisk, FaLocationDot, FaTrash, FaWallet } from 'react-icons/fa6';
+
 interface EditPlanProps {
-    editingPlan: Plan,
+    editingPlan: Plan;
 }
 
 const EditPlanForm: React.FC<EditPlanProps> = ({ editingPlan }) => {
-    const { setLoading } = useLoading();
     const router = useRouter();
 
-    const [plan, setPlan] = useState<Plan>(editingPlan);
+    const [plan, setPlan] = useState<Plan>({
+        ...editingPlan,
+        budget: editingPlan.budget ?? 0,
+        keywords: editingPlan.keywords ?? '',
+    });
     const [range, setRange] = useState([
         {
-            startDate: new Date(plan.departureDate),
-            endDate: new Date(plan.arrivalDate),
+            startDate: new Date(editingPlan.departureDate),
+            endDate: new Date(editingPlan.arrivalDate),
             key: 'selection',
         },
     ]);
     const [errors, setErrors] = useState<{ departure?: string; destination?: string }>({});
-
-    if (!editingPlan) return;
+    const [isUpdating, setIsUpdating] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const validateForm = () => {
         const newErrors: { departure?: string; destination?: string } = {};
+
         if (!plan.departure) {
-            newErrors.departure = "出発地を入力してください";
+            newErrors.departure = '出発地を入力してください';
         }
+
         if (!plan.destination) {
-            newErrors.destination = "目的地を入力してください";
+            newErrors.destination = '目的地を入力してください';
         }
+
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setPlan(prevPlan => ({
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = event.target;
+
+        setPlan((prevPlan) => ({
             ...prevPlan,
-            [name]: value
+            [name]: value,
         }));
     };
 
     const handleSelect = (ranges: any) => {
         setRange([ranges.selection]);
-        setPlan(prevPlan => ({
+        setPlan((prevPlan) => ({
             ...prevPlan,
             departureDate: ranges.selection.startDate,
             arrivalDate: ranges.selection.endDate,
         }));
     };
 
-    const handleBudgetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setPlan(prevPlan => ({
+    const handleBudgetChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setPlan((prevPlan) => ({
             ...prevPlan,
-            budget: parseInt(e.target.value, 10)
+            budget: parseInt(event.target.value || '0', 10),
         }));
     };
 
     const onUpdate = async () => {
         if (!validateForm()) return;
+
         try {
-            setLoading(true);
-            const uri = `/api/plan/${plan.id}/update`;
-            const response = await fetch(uri, {
+            setIsUpdating(true);
+            const planPayload = {
+                departure: plan.departure,
+                destination: plan.destination,
+                departureDate: plan.departureDate,
+                arrivalDate: plan.arrivalDate,
+                budget: plan.budget ?? null,
+                keywords: plan.keywords ?? '',
+            };
+            const response = await fetch(`/api/plan/${plan.id}/update`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(plan),
+                body: JSON.stringify(planPayload),
             });
+
             if (response.ok) {
+                router.refresh();
                 router.push(`/user/plan/${plan.id}`);
             }
         } catch (error) {
             console.error('Error saving plan:', error);
         } finally {
-            setLoading(false);
+            setIsUpdating(false);
         }
     };
 
     const onDelete = async () => {
         if (!plan.id) return;
+
         try {
-            setLoading(true);
+            setIsDeleting(true);
             const response = await fetch(`/api/plan/${plan.id}/delete`, {
                 method: 'POST',
             });
+
             if (response.ok) {
-                router.push(`/user/plan/`);
+                router.refresh();
+                router.push('/user/plan');
             }
         } catch (error) {
             console.error('Error deleting plan:', error);
         } finally {
-            setLoading(false);
+            setIsDeleting(false);
         }
     };
 
-    const onCancel = async () => {
-        try {
-            setLoading(true);
-            router.push(`/user/plan/${plan.id}`);
-        } catch (error) {
-            console.error('Error saving plan:', error);
-        } finally {
-            setLoading(false);
-        }
+    const onCancel = () => {
+        router.push(`/user/plan/${plan.id}`);
     };
 
     return (
-        <>
-            <div className="max-w-lg mx-auto p-6 bg-white shadow-md rounded-lg space-y-6">
-                <div className="">
-                    <div className="mb-3 py-1 px-2 rounded bg-green-500 text-white text-sm">
+        <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="border-b border-slate-100 pb-5">
+                <p className="text-sm font-bold uppercase tracking-[0.18em] text-emerald-700">Basic info</p>
+                <h2 className="mt-2 text-2xl font-black text-slate-950">基本情報</h2>
+            </div>
+
+            <div className="mt-5 space-y-6">
+                <div>
+                    <label className="mb-2 flex items-center gap-2 text-sm font-bold text-slate-700">
+                        <FaLocationDot className="text-emerald-600" aria-hidden="true" />
                         出発地 - 目的地
-                    </div>
-                    <div className="flex">
-                        <div className="w-1/2 me-2">
+                    </label>
+                    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
+                        <div>
                             <input
                                 type="text"
                                 name="departure"
                                 value={plan.departure}
                                 onChange={handleInputChange}
-                                className={`p-2 w-full border ${errors.departure ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                                placeholder="出発地"
+                                className={`h-11 w-full rounded-md border px-3 text-sm text-slate-900 outline-none transition focus:ring-4 focus:ring-emerald-100 ${errors.departure ? 'border-red-400' : 'border-slate-300 focus:border-emerald-500'}`}
                             />
-                            {errors.departure && (
-                                <p className="text-red-500 text-sm mt-1">{errors.departure}</p>
-                            )}
+                            {errors.departure && <p className="mt-1 text-sm font-semibold text-red-600">{errors.departure}</p>}
                         </div>
-                        <div className="w-1/2">
+                        <div>
                             <input
                                 type="text"
                                 name="destination"
                                 value={plan.destination}
                                 onChange={handleInputChange}
-                                className={`p-2 w-full border ${errors.destination ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                                placeholder="目的地"
+                                className={`h-11 w-full rounded-md border px-3 text-sm text-slate-900 outline-none transition focus:ring-4 focus:ring-emerald-100 ${errors.destination ? 'border-red-400' : 'border-slate-300 focus:border-emerald-500'}`}
                             />
-                            {errors.destination && (
-                                <p className="text-red-500 text-sm mt-1">{errors.destination}</p>
-                            )}
+                            {errors.destination && <p className="mt-1 text-sm font-semibold text-red-600">{errors.destination}</p>}
                         </div>
                     </div>
                 </div>
-                <div className="flex flex-col">
-                    <div className="mb-2 py-1 px-2 rounded bg-green-500 text-white text-sm">
-                        日程
-                    </div>
-                    <div className="flex justify-center">
+
+                <div>
+                    <label className="mb-2 block text-sm font-bold text-slate-700">日程</label>
+                    <div className="overflow-hidden rounded-lg border border-slate-200 bg-slate-50">
                         <DateRange
                             ranges={range}
                             onChange={handleSelect}
                             moveRangeOnFirstSelection={false}
-                            rangeColors={['#3b82f6']}
+                            rangeColors={['#059669']}
                             locale={ja}
-                            dateDisplayFormat={'yyyy/MM/dd'}
-                            editableDateInputs={true}
+                            dateDisplayFormat="yyyy/MM/dd"
+                            editableDateInputs
                         />
                     </div>
                 </div>
+
                 <div>
-                    <div className="my-2 py-1 px-2 rounded bg-green-500 text-white text-sm">
+                    <label className="mb-2 flex items-center gap-2 text-sm font-bold text-slate-700">
+                        <FaWallet className="text-emerald-600" aria-hidden="true" />
                         予算
-                    </div>
-                    <div>
+                    </label>
+                    <div className="flex items-center gap-2">
                         <input
                             type="number"
                             min="0"
                             max="1000000"
                             step="5000"
-                            value={plan.budget}
+                            value={plan.budget ?? 0}
                             onChange={handleBudgetChange}
-                            className="w-1/2 p-2 border border-gray-300 rounded-md"
+                            className="h-11 min-w-0 flex-1 rounded-md border border-slate-300 px-3 text-sm text-slate-900 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
                         />
-                        <span className="ms-2">
-                            円
-                        </span>
-
+                        <span className="text-sm font-bold text-slate-600">円</span>
                     </div>
                     <input
-
                         type="range"
                         min="0"
                         max="1000000"
                         step="5000"
-                        value={plan.budget}
+                        value={plan.budget ?? 0}
                         onChange={handleBudgetChange}
-                        className="mt-2 p-0 border border-gray-300 rounded-md"
+                        className="mt-3 w-full accent-emerald-600"
                     />
                 </div>
-                <div className="flex flex-col">
-                    <div className="mb-2 py-1 px-2 rounded bg-green-500 text-white text-sm">
-                        キーワード
-                    </div>
+
+                <div>
+                    <label className="mb-2 block text-sm font-bold text-slate-700">キーワード</label>
                     <input
                         type="text"
                         name="keywords"
-                        value={plan.keywords}
+                        value={plan.keywords ?? ''}
                         onChange={handleInputChange}
-                        className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="例: グルメ, 温泉, 美術館"
+                        className="h-11 w-full rounded-md border border-slate-300 px-3 text-sm text-slate-900 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
                     />
                 </div>
-                <div className="flex justify-center">
+
+                <div className="grid gap-3 border-t border-slate-100 pt-5 sm:grid-cols-3 xl:grid-cols-1">
                     <button
                         onClick={onUpdate}
-                        className="me-3 py-2 px-4 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600"
+                        disabled={isUpdating || isDeleting}
+                        className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-emerald-600 px-4 text-sm font-bold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-400"
                     >
-                        更新
+                        <FaFloppyDisk aria-hidden="true" />
+                        {isUpdating ? '更新中...' : '更新'}
                     </button>
                     <button
                         onClick={onDelete}
-                        className="me-2 py-2 px-4 border bg-red-500 text-white rounded-md"
+                        disabled={isUpdating || isDeleting}
+                        className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-red-600 px-4 text-sm font-bold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-slate-400"
                     >
-                        削除
+                        <FaTrash aria-hidden="true" />
+                        {isDeleting ? '削除中...' : '削除'}
                     </button>
                     <button
                         onClick={onCancel}
-                        className="py-2 px-4 border border-blue-500 text-blue-500 font-semibold rounded-md"
+                        className="inline-flex h-11 items-center justify-center gap-2 rounded-md border border-slate-300 px-4 text-sm font-bold text-slate-700 transition hover:border-emerald-400 hover:text-emerald-700"
                     >
+                        <FaArrowRotateLeft aria-hidden="true" />
                         戻る
                     </button>
                 </div>
             </div>
-        </>
+        </section>
     );
 };
 

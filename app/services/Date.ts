@@ -10,7 +10,7 @@ export function  getDateIndices(departureDate:Date, arrivalDate:Date) {
     var currentDate = new Date(departure);
 
     while (currentDate <= arrival) {
-        const dayIndex = Math.floor((currentDate - departure) / (1000 * 60 * 60 * 24));
+        const dayIndex = Math.floor((currentDate.getTime() - departure.getTime()) / (1000 * 60 * 60 * 24));
         dateIndices.push(dayIndex);
         currentDate.setDate(currentDate.getDate() + 1);
     }

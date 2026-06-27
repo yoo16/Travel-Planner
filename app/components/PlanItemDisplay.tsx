@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import PlanItemModal from './PlanItemModal';
+import React from 'react';
+import { FaBed, FaLocationDot, FaPen, FaRoute, FaWallet } from 'react-icons/fa6';
+import { formatBudget } from '@/app/services/Format';
 
 interface PlanItemDisplayProps {
     plan: Plan;
@@ -7,62 +8,59 @@ interface PlanItemDisplayProps {
     onEdit?: () => void;
 }
 
-const PlanItemDisplay: React.FC<PlanItemDisplayProps> = ({ plan, planItem, onEdit }) => {
+const PlanItemDisplay: React.FC<PlanItemDisplayProps> = ({ planItem, onEdit }) => {
+    const budgetLabel = formatBudget(planItem.budget);
 
     return (
-        <div key={planItem.id} className="bg-gray-50 p-2 rounded-lg">
-            <div className="text-gray-700 my-4">
-                <span className="text-xs font-semibold rounded p-2 mx-2  bg-green-500 text-white">
-                    行動
-                </span>
-                {planItem.activity}
-                <span className="text-xs font-semibold rounded p-2 mx-2  bg-green-500 text-white">
-                    場所
-                </span>
-                {planItem.place}
-                {planItem.transportation && (
-                    <>
-                        <span className="text-xs font-semibold rounded p-2 mx-2  bg-green-500 text-white">
-                            移動
-                        </span>
-                        {planItem.transportation}
-                    </>
+        <article className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                    <p className="text-sm font-bold text-emerald-700">{planItem.place || '場所未設定'}</p>
+                    <h3 className="mt-2 text-xl font-black leading-snug text-slate-950">
+                        {planItem.activity || 'アクティビティ未設定'}
+                    </h3>
+                </div>
+
+                {onEdit && (
+                    <button
+                        onClick={onEdit}
+                        className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-slate-300 px-4 text-sm font-bold text-slate-700 transition hover:border-amber-400 hover:text-amber-700"
+                    >
+                        <FaPen aria-hidden="true" />
+                        編集
+                    </button>
                 )}
             </div>
 
-            <div className="text-gray-700 my-4">
-                {planItem.accommodation &&
-                    <>
-                        <span className="text-xs font-semibold rounded p-2 mx-2  bg-green-500 text-white">
-                            宿泊先
-                        </span>
-                        {planItem.accommodation}
-                    </>
-                }
-                <span className="text-xs font-semibold rounded p-2 mx-2  bg-green-500 text-white">
-                    予算
-                </span>
-                {planItem.budget?.toLocaleString()}
-                <span className="px-1">円</span>
-            </div>
-
-            <div className="text-gray-700">
-                <span className="text-xs font-semibold rounded p-2 mx-2  bg-green-500 text-white">
-                    Memo
-                </span>
-                {planItem.memo}
-            </div>
-
-            {onEdit &&
-                <div className="flex justify-end">
-                    <button onClick={onEdit}
-                        className="me-2 py-1 px-4 bg-yellow-500 text-white text-sm rounded-md"
-                    >
-                        編集
-                    </button>
+            <div className="mt-5 grid gap-3 text-sm text-slate-600 sm:grid-cols-2">
+                {planItem.transportation && (
+                    <div className="flex items-center gap-3 rounded-md bg-slate-50 px-4 py-3">
+                        <FaRoute className="text-emerald-600" aria-hidden="true" />
+                        <span>{planItem.transportation}</span>
+                    </div>
+                )}
+                {planItem.accommodation && (
+                    <div className="flex items-center gap-3 rounded-md bg-slate-50 px-4 py-3">
+                        <FaBed className="text-emerald-600" aria-hidden="true" />
+                        <span>{planItem.accommodation}</span>
+                    </div>
+                )}
+                <div className="flex items-center gap-3 rounded-md bg-slate-50 px-4 py-3">
+                    <FaWallet className="text-emerald-600" aria-hidden="true" />
+                    <span>{budgetLabel}</span>
                 </div>
-            }
-        </div>
+                <div className="flex items-center gap-3 rounded-md bg-slate-50 px-4 py-3">
+                    <FaLocationDot className="text-emerald-600" aria-hidden="true" />
+                    <span>{planItem.place || '場所未設定'}</span>
+                </div>
+            </div>
+
+            {planItem.memo && (
+                <p className="mt-5 rounded-md border border-slate-100 bg-white px-4 py-3 text-sm leading-7 text-slate-600">
+                    {planItem.memo}
+                </p>
+            )}
+        </article>
     );
 };
 

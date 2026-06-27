@@ -3,12 +3,10 @@
 import React, { useState, useRef } from 'react';
 import AiPlanForm from '@/app/components/AiPlanForm';
 import AiPlanList from '@/app/components/AiPlanList';
-import { useLoading } from '@/app/context/LoadingContext';
 import { useRouter } from 'next/navigation';
 
 const PlanCreatePage: React.FC = () => {
     const router = useRouter();
-    const { setLoading } = useLoading();
     const planListRef = useRef<HTMLDivElement>(null);
 
     const [plan, setPlan] = useState<Plan>();
@@ -21,7 +19,6 @@ const PlanCreatePage: React.FC = () => {
         } catch (error) {
             console.error('Error creating travel plan:', error);
         } finally {
-            setLoading(false);
             if (planListRef.current) {
                 planListRef.current.scrollIntoView({ behavior: 'smooth' });
             }

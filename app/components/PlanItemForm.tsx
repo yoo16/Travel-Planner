@@ -1,12 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
+import { FaFloppyDisk, FaTrash, FaXmark } from 'react-icons/fa6';
 import { transportations } from '@/app/data/transportations';
 import { dateList, dateToString } from '@/app/services/Date';
-import { useLoading } from '@/app/context/LoadingContext';
 
 interface PlanItemFormProps {
-    plan: Plan,
+    plan: Plan;
     planItem: PlanItem;
     onSubmit: (planItem: PlanItem) => void;
     onClose: () => void;
@@ -14,39 +14,45 @@ interface PlanItemFormProps {
 }
 
 const PlanItemForm: React.FC<PlanItemFormProps> = ({ plan, planItem, onSubmit, onClose, onDelete }) => {
-    const { setLoading } = useLoading();
-    const [editPlanItem, setEditPlanItem] = useState<PlanItem>(planItem);
-
+    const [editPlanItem, setEditPlanItem] = useState<PlanItem>({
+        ...planItem,
+        transportation: planItem.transportation ?? '',
+        place: planItem.place ?? '',
+        activity: planItem.activity ?? '',
+        memo: planItem.memo ?? '',
+        accommodation: planItem.accommodation ?? '',
+        budget: planItem.budget ?? 0,
+    });
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [transportationSuggestions, setTransportationSuggestions] = useState<string[]>([]);
+    const [isUpdating, setIsUpdating] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const dateOptions = dateList(plan.departureDate, plan.arrivalDate);
-    console.log("dateOptions:", dateOptions);
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        setEditPlanItem(prevPlanItem => ({
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value } = event.target;
+
+        setEditPlanItem((prevPlanItem) => ({
             ...prevPlanItem,
-            [name]: value
+            [name]: name === 'budget' ? parseInt(value || '0', 10) : value,
         }));
     };
 
-    const handleDateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const { name, value } = e.target;
-        setEditPlanItem(prevPlanItem => ({
+    const handleDateChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setEditPlanItem((prevPlanItem) => ({
             ...prevPlanItem,
-            [name]: new Date(value).toISOString()
+            date: new Date(event.target.value),
         }));
     };
 
-    const onUpdate = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (typeof plan?.id === 'undefined') return;
+    const onUpdate = async (event: React.FormEvent) => {
+        event.preventDefault();
+        if (typeof plan.id === 'undefined') return;
 
         try {
-            setLoading(true);
-            const uri = `/api/plan_item/${editPlanItem.id}/update`;
-            const response = await fetch(uri, {
+            setIsUpdating(true);
+            const response = await fetch(`/api/plan_item/${editPlanItem.id}/update`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -60,16 +66,16 @@ const PlanItemForm: React.FC<PlanItemFormProps> = ({ plan, planItem, onSubmit, o
         } catch (error) {
             console.error('Error saving plan item:', error);
         } finally {
-            setLoading(false);
+            setIsUpdating(false);
         }
     };
 
     const handleDelete = async () => {
-        if (!planItem || !planItem.id) return;
+        if (!planItem.id) return;
+
         try {
-            setLoading(true);
-            const uri = `/api/plan_item/${planItem.id}/delete`;
-            const response = await fetch(uri, {
+            setIsDeleting(true);
+            const response = await fetch(`/api/plan_item/${planItem.id}/delete`, {
                 method: 'POST',
             });
 
@@ -79,180 +85,186 @@ const PlanItemForm: React.FC<PlanItemFormProps> = ({ plan, planItem, onSubmit, o
         } catch (error) {
             console.error('Error deleting plan item:', error);
         } finally {
-            setLoading(true);
+            setIsDeleting(false);
         }
     };
 
-    const handleTransportationChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const input = e.target.value;
-        setEditPlanItem(prevPlanItem => ({
+    const handleTransportationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const input = event.target.value;
+        setEditPlanItem((prevPlanItem) => ({
             ...prevPlanItem,
-            transportation: input
+            transportation: input,
         }));
 
-        const filteredSuggestions = transportations.filter((suggestion) =>
-            suggestion.startsWith(input)
+        setTransportationSuggestions(
+            transportations.filter((suggestion) => suggestion.startsWith(input)),
         );
-        setTransportationSuggestions(filteredSuggestions);
     };
 
     const handleShowSuggestions = () => {
-        setShowSuggestions(!showSuggestions);
+        setShowSuggestions((current) => !current);
         setTransportationSuggestions(transportations);
     };
 
     const handleSuggestionClick = (suggestion: string) => {
-        setEditPlanItem(prevPlanItem => ({
+        setEditPlanItem((prevPlanItem) => ({
             ...prevPlanItem,
-            transportation: suggestion
+            transportation: suggestion,
         }));
         setShowSuggestions(false);
     };
 
     return (
-        <>
-            <div className="space-y-6 p-6 bg-gray-50 rounded-md shadow-sm">
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                    <div className="flex flex-col">
-                        <label className="text-sm font-semibold text-gray-600 mb-1">日付</label>
-                        <select
-                            name="date"
-                            value={dateToString(editPlanItem.date)}
-                            onChange={handleDateChange}
-                            className="p-2 border border-gray-300 rounded-md"
-                            required
-                        >
-                            {dateOptions.map((dateOption) => (
-                                <option key={dateOption} value={dateOption}>
-                                    {new Date(dateOption).toLocaleDateString()}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
+        <form onSubmit={onUpdate} className="space-y-5">
+            <div>
+                <p className="text-sm font-bold uppercase tracking-[0.18em] text-emerald-700">Schedule item</p>
+                <h2 className="mt-2 text-2xl font-black text-slate-950">予定を編集</h2>
+            </div>
 
+            <div className="grid gap-4 sm:grid-cols-2">
+                <label className="block">
+                    <span className="mb-2 block text-sm font-bold text-slate-700">日付</span>
+                    <select
+                        name="date"
+                        value={dateToString(editPlanItem.date)}
+                        onChange={handleDateChange}
+                        className="h-11 w-full rounded-md border border-slate-300 bg-white px-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+                        required
+                    >
+                        {dateOptions.map((dateOption) => (
+                            <option key={dateOption} value={dateOption}>
+                                {new Date(dateOption).toLocaleDateString('ja-JP')}
+                            </option>
+                        ))}
+                    </select>
+                </label>
+
+                <label className="block">
+                    <span className="mb-2 block text-sm font-bold text-slate-700">予算</span>
+                    <input
+                        type="number"
+                        name="budget"
+                        value={editPlanItem.budget ?? 0}
+                        onChange={handleInputChange}
+                        className="h-11 w-full rounded-md border border-slate-300 px-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+                    />
+                </label>
+            </div>
+
+            <div>
+                <label className="mb-2 block text-sm font-bold text-slate-700">移動</label>
+                <div className="flex gap-2">
+                    <input
+                        type="text"
+                        name="transportation"
+                        value={editPlanItem.transportation}
+                        onChange={handleTransportationChange}
+                        className="h-11 min-w-0 flex-1 rounded-md border border-slate-300 px-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+                        placeholder="移動手段を入力"
+                    />
+                    <button
+                        type="button"
+                        onClick={handleShowSuggestions}
+                        className="h-11 rounded-md border border-slate-300 px-4 text-sm font-bold text-slate-700 transition hover:border-emerald-400 hover:text-emerald-700"
+                    >
+                        候補
+                    </button>
                 </div>
+                {showSuggestions && transportationSuggestions.length > 0 && (
+                    <ul className="mt-2 max-h-40 overflow-y-auto rounded-md border border-slate-200 bg-white shadow-sm">
+                        {transportationSuggestions.map((suggestion) => (
+                            <li key={suggestion}>
+                                <button
+                                    type="button"
+                                    onClick={() => handleSuggestionClick(suggestion)}
+                                    className="block w-full px-3 py-2 text-left text-sm text-slate-700 hover:bg-emerald-50 hover:text-emerald-700"
+                                >
+                                    {suggestion}
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+                )}
+            </div>
 
-                <div className="flex flex-col">
-
-                    <div className="flex flex-col">
-                        <label className="text-sm font-semibold text-gray-600 mb-1">移動</label>
-                        <div className="flex items-center">
-                            <input
-                                type="text"
-                                name="transportation"
-                                value={editPlanItem.transportation}
-                                onChange={handleTransportationChange}
-                                className="p-2 flex-grow border border-gray-300 rounded-md"
-                                placeholder="移動手段を入力"
-                            />
-                            <button
-                                type="button"
-                                onClick={handleShowSuggestions}
-                                className="ml-2 p-2 text-sm border border-blue-500 text-blue-500 rounded-md"
-                            >
-                                候補
-                            </button>
-                        </div>
-                        {showSuggestions && transportationSuggestions.length > 0 && (
-                            <ul className="mt-2 bg-white border border-gray-300 rounded-md max-h-40 overflow-y-auto">
-                                {transportationSuggestions.map((suggestion, index) => (
-                                    <li
-                                        key={index}
-                                        onClick={() => handleSuggestionClick(suggestion)}
-                                        className="p-2 cursor-pointer hover:bg-gray-200"
-                                    >
-                                        {suggestion}
-                                    </li>
-                                ))}
-                            </ul>
-                        )}
-                    </div>
-                </div>
-
-                <div className="flex flex-col">
-                    <label className="text-sm font-semibold text-gray-600 mb-1">場所</label>
+            <div className="grid gap-4 sm:grid-cols-2">
+                <label className="block">
+                    <span className="mb-2 block text-sm font-bold text-slate-700">場所</span>
                     <input
                         type="text"
                         name="place"
                         value={editPlanItem.place}
                         onChange={handleInputChange}
-                        className="p-2 border border-gray-300 rounded-md"
+                        className="h-11 w-full rounded-md border border-slate-300 px-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
                         required
                     />
-                </div>
+                </label>
 
-                <div className="flex flex-col">
-                    <label className="text-sm font-semibold text-gray-600 mb-1">アクティビティ</label>
-                    <input
-                        type="text"
-                        name="activity"
-                        value={editPlanItem.activity}
-                        onChange={handleInputChange}
-                        className="p-2 border border-gray-300 rounded-md"
-                        required
-                    />
-                </div>
-
-                <div className="flex flex-col">
-                    <label className="text-sm font-semibold text-gray-600 mb-1">宿泊先</label>
+                <label className="block">
+                    <span className="mb-2 block text-sm font-bold text-slate-700">宿泊先</span>
                     <input
                         type="text"
                         name="accommodation"
                         value={editPlanItem.accommodation}
                         onChange={handleInputChange}
-                        className="p-2 border border-gray-300 rounded-md"
+                        className="h-11 w-full rounded-md border border-slate-300 px-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
                     />
-                </div>
-
-
-                <div className="flex flex-col">
-                    <label className="text-sm font-semibold text-gray-600 mb-1">予算</label>
-                    <input
-                        type="number"
-                        name="budget"
-                        value={editPlanItem.budget}
-                        onChange={handleInputChange}
-                        className="p-2 border border-gray-300 rounded-md"
-                    />
-                </div>
-
-                <div className="flex flex-col">
-                    <label className="text-sm font-semibold text-gray-600 mb-1">Memo</label>
-                    <textarea
-                        name="memo"
-                        value={editPlanItem.memo}
-                        onChange={handleInputChange}
-                        className="p-2 border border-gray-300 rounded-md"
-                    />
-                </div>
-
-                <div className="flex justify-between space-x-3">
-                    <div className="flex space-x-3">
-                        <button
-                            type="button"
-                            onClick={onUpdate}
-                            className="py-2 px-4 text-sm bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600"
-                        >
-                            Update
-                        </button>
-                        <button
-                            type="button"
-                            onClick={handleDelete}
-                            className="py-2 px-4 text-sm bg-red-500 text-white font-semibold rounded-md hover:bg-red-600"
-                        >
-                            Delete
-                        </button>
-                        <button
-                            type="button"
-                            onClick={onClose}
-                            className="py-2 px-4 text-sm bg-gray-500 text-white font-semibold rounded-md hover:bg-gray-600"
-                        >
-                            Close
-                        </button>
-                    </div>
-                </div>
+                </label>
             </div>
-        </>
+
+            <label className="block">
+                <span className="mb-2 block text-sm font-bold text-slate-700">アクティビティ</span>
+                <input
+                    type="text"
+                    name="activity"
+                    value={editPlanItem.activity}
+                    onChange={handleInputChange}
+                    className="h-11 w-full rounded-md border border-slate-300 px-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+                    required
+                />
+            </label>
+
+            <label className="block">
+                <span className="mb-2 block text-sm font-bold text-slate-700">Memo</span>
+                <textarea
+                    name="memo"
+                    value={editPlanItem.memo}
+                    onChange={handleInputChange}
+                    rows={4}
+                    className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+                />
+            </label>
+
+            <div className="flex flex-col gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:justify-between">
+                <div className="flex gap-3">
+                    <button
+                        type="submit"
+                        disabled={isUpdating || isDeleting}
+                        className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-emerald-600 px-4 text-sm font-bold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-400"
+                    >
+                        <FaFloppyDisk aria-hidden="true" />
+                        {isUpdating ? '更新中...' : '更新'}
+                    </button>
+                    <button
+                        type="button"
+                        onClick={handleDelete}
+                        disabled={isUpdating || isDeleting}
+                        className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-red-600 px-4 text-sm font-bold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-slate-400"
+                    >
+                        <FaTrash aria-hidden="true" />
+                        {isDeleting ? '削除中...' : '削除'}
+                    </button>
+                </div>
+                <button
+                    type="button"
+                    onClick={onClose}
+                    className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-slate-300 px-4 text-sm font-bold text-slate-700 transition hover:border-emerald-400 hover:text-emerald-700"
+                >
+                    <FaXmark aria-hidden="true" />
+                    閉じる
+                </button>
+            </div>
+        </form>
     );
 };
 

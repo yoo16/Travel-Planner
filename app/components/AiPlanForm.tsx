@@ -6,7 +6,6 @@ import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 import { ja } from 'date-fns/locale';
 import KeywordInput from './KeywordInput';
-import { useLoading } from '../context/LoadingContext';
 
 interface TravelFormProps {
     onAiCreate: (plan: Plan, planItems:PlanItem[][]) => void;
@@ -24,8 +23,6 @@ const initPlan: Plan = {
 }
 
 const AiPlanForm = ({ onAiCreate, onClose, editPlan }:TravelFormProps) => {
-    const { setLoading } = useLoading();
-
     const [plan, setPlan] = useState<Plan>(editPlan ? editPlan : initPlan);
     const [range, setRange] = useState([
         {
@@ -35,6 +32,7 @@ const AiPlanForm = ({ onAiCreate, onClose, editPlan }:TravelFormProps) => {
         },
     ]);
     const [errors, setErrors] = useState<ErrorMessages>({});
+    const [isCreating, setIsCreating] = useState(false);
 
     const topRef = useRef<HTMLDivElement>(null);
 
@@ -91,7 +89,7 @@ const AiPlanForm = ({ onAiCreate, onClose, editPlan }:TravelFormProps) => {
         if (validateForm()) {
             if (confirm('AIプランを作成しますか？')) {
                 try {
-                    setLoading(true);
+                    setIsCreating(true);
                     const response = await fetch('/api/ai/create', {
                         method: 'POST',
                         headers: {
@@ -114,7 +112,7 @@ const AiPlanForm = ({ onAiCreate, onClose, editPlan }:TravelFormProps) => {
                 } catch (error) {
                     console.error('Error creating travel plan:', error);
                 } finally {
-                    setLoading(false);
+                    setIsCreating(false);
                 }
             }
         }
@@ -216,8 +214,13 @@ const AiPlanForm = ({ onAiCreate, onClose, editPlan }:TravelFormProps) => {
             </div>
 
             <div className="flex justify-center">
-                <button onClick={handleAiCreate} type="button" className="mx-1 py-2 px-4 bg-blue-500 text-white rounded-md">
-                    AIプラン作成
+                <button
+                    onClick={handleAiCreate}
+                    type="button"
+                    disabled={isCreating}
+                    className="mx-1 py-2 px-4 bg-blue-500 text-white rounded-md disabled:cursor-not-allowed disabled:bg-slate-400"
+                >
+                    {isCreating ? '作成中...' : 'AIプラン作成'}
                 </button>
                 <button onClick={handleClose} type="button" className="mx-1 py-2 px-4 bg-white text-blue-500 border border-blue-500 rounded-md">
                     戻る
